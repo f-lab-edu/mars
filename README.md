@@ -20,7 +20,7 @@
 | ---------------- | ----------------------- |
 | **JDK**         | 21                     |
 | **IDE**         | IntelliJ IDEA          |
-| **Framework**   | Spring Boot 3.2.11     |
+| **Framework**   | Spring Boot 3.4.0  |
 | **Database**    | MySQL 8.4.3            |
 | **ORM**         | Hibernate 6.5.3 Final  |
 
