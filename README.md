@@ -43,5 +43,5 @@
 - **Account**: 각 사용자의 계좌 정보를 기록합니다. `member_id`와 연관되어 사용자의 계좌 정보를 연결합니다.
 - **Stock_Trading_History**: 사용자가 거래한 주식의 내역을 저장하며, 거래 시각, 거래 수량, 주식 코드 등을 포함합니다.
 - **Stock**: 주식 종목에 대한 정보를 관리합니다. 주식 종목 코드(`stockSymbol`)와 현재 가격을 저장합니다.
-- **Cash_Dividend**: 사용자가 보유한 주식에 대한 배당금 정보를 관리합니다. `member_id`와 연관되어 사용자의 배당금을 기록합니다.
+- **Cash_Dividend**: 사용자가 보유한 주식에 대한 배당금 정보를 관리합니다. `account_id`와 연관되어 계좌의 배당금을 기록합니다.
 https://drive.google.com/file/d/1Ek02UnoSWtx_i3y5BP1eQld6z6vldD6t/view?usp=sharing
