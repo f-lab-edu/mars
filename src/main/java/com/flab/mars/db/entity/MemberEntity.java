@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+@Table(name = "member")
+public class MemberEntity {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -30,10 +34,16 @@ public class Member {
 
 
 
-    public Member(String name, String email, String pw) {
+    public MemberEntity(String name, String email, String pw ) {
         this.name = name;
         this.email = email;
         this.pw = pw;
         this.status = MemberStatus.ACTIVE;
+    }
+
+    public MemberEntity updateMember(String name, String pw, PasswordEncoder passwordEncoder ){
+        if(StringUtils.hasText(name)) this.name = name;
+        if(StringUtils.hasText(pw)) this.pw = passwordEncoder.encode(pw);
+        return this;
     }
 }

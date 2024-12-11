@@ -1,0 +1,74 @@
+package com.flab.mars.api.controller;
+
+import com.flab.mars.api.dto.request.CreateMemberRequest;
+import com.flab.mars.api.dto.request.UpdateMemberRequest;
+import com.flab.mars.api.dto.response.CreateMemberResponse;
+import com.flab.mars.api.dto.response.UpdateMemberResponse;
+import com.flab.mars.domain.service.MemberService;
+import com.flab.mars.domain.vo.CreateMember;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/members")
+public class MemberAPIController {
+
+    private final MemberService memberService;
+
+
+    /**
+     * 사용자 회원가입 기능
+     * @param request
+     * @return
+     */
+    @PostMapping("/new")
+    public CreateMemberResponse createMember(@RequestBody  @Valid CreateMemberRequest request){
+
+        String name = request.getName();
+        String email = request.getEmail();
+        String pw = request.getPw();
+
+        // dto -> vo 변환
+        CreateMember createMember = CreateMember.builder()
+                .name(name)
+                .email(email)
+                .pw(pw)
+                .build();
+
+        Long memberId = memberService.processNewMember(createMember);
+        return new CreateMemberResponse(memberId, name, email, "회원 가입 성공");
+    }
+
+    /**
+     * 사용자 업데이트 기능
+     * @param request
+     * @return
+     */
+    @PutMapping("/update/{id}")
+    public UpdateMemberResponse updateMember(@PathVariable("id") Long id , @RequestBody @Valid UpdateMemberRequest request){
+
+        memberService.updateMember(id, request.getName(), request.getPw());
+
+        return new UpdateMemberResponse(id, request.getName(), request.getEmail(), "회원 가입 성공");
+    }
+
+
+    /**
+     * 사용자 삭제 기능
+     * @param id 회원의 고유 ID
+     * @return 삭제 결과 상태
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteMember(@PathVariable("id") Long id ){
+        try {
+            memberService.deleteById(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+}
