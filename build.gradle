@@ -28,13 +28,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.8.1' // 쿼리디버그
+ 	implementation 'com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0' // 쿼리디버그
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Spring Security Test
+	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
