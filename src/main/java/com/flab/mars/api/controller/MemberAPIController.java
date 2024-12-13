@@ -8,6 +8,7 @@ import com.flab.mars.domain.service.MemberService;
 import com.flab.mars.domain.vo.CreateMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
+@Slf4j
 public class MemberAPIController {
 
     private final MemberService memberService;
@@ -27,6 +29,8 @@ public class MemberAPIController {
      */
     @PostMapping("/new")
     public CreateMemberResponse createMember(@RequestBody  @Valid CreateMemberRequest request){
+
+        log.info("/api/members/new 요청");
 
         String name = request.getName();
         String email = request.getEmail();
@@ -53,7 +57,7 @@ public class MemberAPIController {
 
         memberService.updateMember(id, request.getName(), request.getPw());
 
-        return new UpdateMemberResponse(id, request.getName(), request.getEmail(), "회원 가입 성공");
+        return new UpdateMemberResponse(id, request.getName(), "회원 가입 성공");
     }
 
 
