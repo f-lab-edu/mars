@@ -68,11 +68,10 @@ public class MemberAPIController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMember(@PathVariable("id") Long id ){
-        try {
-            memberService.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+        if(memberService.deleteByIdAndReturnCount(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

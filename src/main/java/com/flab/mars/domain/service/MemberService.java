@@ -51,9 +51,10 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean deleteById(Long id) {
-        MemberEntity memberEntity = findMemberById(id);
-        memberRepository.delete(memberEntity);
+    public boolean deleteByIdAndReturnCount(Long id) {
+        if (memberRepository.deleteByIdAndReturnCount(id) == 0) {
+            return false;
+        }
         return true;
     }
 

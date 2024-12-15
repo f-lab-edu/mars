@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -134,14 +135,16 @@ class MemberAPIControllerTest {
                 .build();
 
         Long memberId = memberService.processNewMember(createMemberRequest);
+        when(memberService.deleteByIdAndReturnCount(memberId)).thenReturn(true);  // 삭제된 행이 1개인 경우
+
         // when & then
         mockMvc.perform(delete("/api/members/delete/{id}", memberId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                 )
-                .andExpect(status().isNoContent()); // 204 No Content
+                .andExpect(status().isOk());
 
-        Mockito.verify(memberService).deleteById(memberId);
+        Mockito.verify(memberService).deleteByIdAndReturnCount(memberId);
     }
 
 }
