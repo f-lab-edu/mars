@@ -19,3 +19,7 @@ logging:
   level:
     org.hibernate.SQL: debug # 로거를 통해 sql 출력
     org.hibernate.type: trace # 파라미터 로거남기기
+
+kis:
+  api:
+    grant_type: client_credentials
