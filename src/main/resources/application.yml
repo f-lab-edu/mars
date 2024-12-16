@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/mars
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create # 테이블 drop 후 자동 생성
+    properties:
+      hibernate:
+        #         show_sql: true # 시스템 아웃으로 sql 출력
+        format_sql: true
+
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug # 로거를 통해 sql 출력
+    org.hibernate.type: trace # 파라미터 로거남기기
+
+kis:
+  api:
+    grant_type: client_credentials
