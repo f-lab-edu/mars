@@ -27,10 +27,10 @@ public class MemberAPIController {
      * @param request
      * @return
      */
-    @PostMapping("/new")
+    @PostMapping
     public CreateMemberResponse createMember(@RequestBody  @Valid CreateMemberRequest request){
 
-        log.info("/api/members/new 요청");
+        log.info("POST /api/members 요청 - 사용자 생성: {}", request.getEmail());
 
         String name = request.getName();
         String email = request.getEmail();
@@ -52,7 +52,7 @@ public class MemberAPIController {
      * @param request
      * @return
      */
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public UpdateMemberResponse updateMember(@PathVariable("id") Long id , @RequestBody @Valid UpdateMemberRequest request){
 
         memberService.updateMember(id, request.getName(), request.getPw());
@@ -66,7 +66,7 @@ public class MemberAPIController {
      * @param id 회원의 고유 ID
      * @return 삭제 결과 상태
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMember(@PathVariable("id") Long id ){
         if(memberService.deleteByIdAndReturnCount(id)) {
             return ResponseEntity.ok().build();

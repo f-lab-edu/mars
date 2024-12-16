@@ -58,7 +58,7 @@ class MemberAPIControllerTest {
 
 
         // when, then
-        mockMvc.perform(post("/api/members/new")
+        mockMvc.perform(post("/api/members")
                 .content(objectMapper.writeValueAsString(createMemberRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
@@ -78,7 +78,7 @@ class MemberAPIControllerTest {
         request.setEmail("invalid-email-format"); // 잘못된 이메일 형식
 
         // When & Then
-        mockMvc.perform(put("/api/members/update/{id}", memberId)
+        mockMvc.perform(put("/api/members/{id}", memberId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf())
@@ -112,7 +112,7 @@ class MemberAPIControllerTest {
 
 
         // when, then
-        mockMvc.perform(put("/api/members/update/{id}", memberId)
+        mockMvc.perform(put("/api/members/{id}", memberId)
                         .content(objectMapper.writeValueAsString(updateMemberRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
@@ -138,7 +138,7 @@ class MemberAPIControllerTest {
         when(memberService.deleteByIdAndReturnCount(memberId)).thenReturn(true);  // 삭제된 행이 1개인 경우
 
         // when & then
-        mockMvc.perform(delete("/api/members/delete/{id}", memberId)
+        mockMvc.perform(delete("/api/members/{id}", memberId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                 )
