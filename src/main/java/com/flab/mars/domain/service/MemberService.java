@@ -51,13 +51,10 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean deleteByIdAndReturnCount(Long id) {
-        if (memberRepository.deleteByIdAndReturnCount(id) == 0) {
-            return false;
-        }
-        return true;
+    public void deleteById(Long id) {
+        MemberEntity memberEntity = findMemberById(id);
+        memberRepository.delete(memberEntity);
     }
-
     public MemberEntity findMemberById(Long id) {
         return memberRepository.findById(id).orElseThrow(() -> new IllegalStateException("회원을 조회할 수 없습니다."));
     }
