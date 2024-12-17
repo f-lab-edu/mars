@@ -26,10 +26,9 @@ public class TokenInfo {
     private String appKey;
     private String appSecret;
 
-    public TokenInfo init(String appKey, String appSecret){
+    public TokenInfo(String appKey, String appSecret) {
         this.appKey = appKey;
         this.appSecret = appSecret;
-        return this;
     }
 
 }
