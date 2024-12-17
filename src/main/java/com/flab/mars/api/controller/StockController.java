@@ -32,15 +32,15 @@ public class StockController {
     @PostMapping({"/accessToken"})
     public ResponseEntity<ResultAPIDto<TokenInfo>> getAccessToken(@RequestBody ApiCredentialsRequest request, HttpSession session) {
         try {
+            System.out.println("request.getAppSecret() = " + request.getAppSecret());
             TokenInfo tokenInfo = stockService.getAccessToken(request.getAppKey(), request.getAppSecret(), session);
             return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", tokenInfo));
-        }catch (HttpClientErrorException e){
+        }catch (RuntimeException e){
             // 로그 남기기
             log.info(e.getMessage());
-
-            if(e.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
-                // 접근토큰 발급 잠시 후 다시 시도하세요(1분당 1회)
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResultAPIDto.res(HttpStatus.FORBIDDEN, e.getMessage()));
+            if (e.getMessage().contains("403")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(ResultAPIDto.res(HttpStatus.FORBIDDEN, "접근토큰 발급 잠시 후 다시 시도하세요(1분당 1회)"));
             }
         }
 
