@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 
 @RestController
@@ -32,7 +31,6 @@ public class StockController {
     @PostMapping({"/accessToken"})
     public ResponseEntity<ResultAPIDto<TokenInfo>> getAccessToken(@RequestBody ApiCredentialsRequest request, HttpSession session) {
         try {
-            System.out.println("request.getAppSecret() = " + request.getAppSecret());
             TokenInfo tokenInfo = stockService.getAccessToken(request.getAppKey(), request.getAppSecret(), session);
             return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", tokenInfo));
         }catch (RuntimeException e){

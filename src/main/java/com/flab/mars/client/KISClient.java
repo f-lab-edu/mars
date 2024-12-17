@@ -27,9 +27,8 @@ public class KISClient {
         requestBody.put("grant_type", grantType);
         requestBody.put("appkey", appKey);
         requestBody.put("appsecret", appSecret);
-        System.out.println(requestBody);
 
-        TokenInfo tokenInfo = webClient.post()
+        return webClient.post()
                 .uri(GET_TOKEN)
                 .headers(headers -> headers.setContentType(MediaType.APPLICATION_JSON))
                 .bodyValue(requestBody)
@@ -43,7 +42,6 @@ public class KISClient {
                 .bodyToMono(TokenInfo.class)
                 .block();
 
-        return tokenInfo;
     }
 
     public StockPrice getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {
