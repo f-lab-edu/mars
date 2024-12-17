@@ -20,11 +20,10 @@ public class StockService {
     private final KISConfig kisConfig;
 
 
-    public TokenInfo getAccessToken(String appKey, String appSecret, HttpSession session) {
-        TokenInfo tokenInfo = kisClient.getAccessToken(appKey, appSecret, kisConfig.getGrantType());
-        tokenInfo.init(appKey, appSecret);
+    public void getAccessToken(TokenInfo tokenInfo, HttpSession session) {
+        String accessToken = kisClient.getAccessToken(tokenInfo.getAppKey(), tokenInfo.getAppSecret(), kisConfig.getGrantType());
+        tokenInfo.setAccessToken(accessToken);
         SessionUtil.setSessionAccessToKenValue(session, tokenInfo);
-        return tokenInfo;
     }
 
     public StockPrice getStockPrice(String stockCode, HttpSession session) {
