@@ -1,6 +1,7 @@
 package com.flab.mars.domain.vo.request;
 
 import com.flab.mars.client.KISApiUrls;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Getter
 @ToString
 @Builder
+@AllArgsConstructor
 public class StockFluctuationRequestVO {
     @Builder.Default
     private String fidRsflRate2 = ""; // Default: ""

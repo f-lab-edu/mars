@@ -19,7 +19,7 @@ public class KISApiUrls {
 
 
     /**
-     * 거래량순위[v1_국내주식-047]
+     * 국내주식 등락률 순위[v1_국내주식-088]
      */
     public static final String RANKING_FLUCTUATION = "/uapi/domestic-stock/v1/ranking/fluctuation";
 

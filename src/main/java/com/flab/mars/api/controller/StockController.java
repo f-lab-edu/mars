@@ -1,6 +1,6 @@
 package com.flab.mars.api.controller;
 
-import com.flab.mars.api.dto.request.ApiCredentialsRequest;
+import com.flab.mars.api.dto.request.ApiCredentialsRequestDto;
 import com.flab.mars.api.dto.request.StockFluctuationRequestDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.api.dto.response.StockFluctuationResponseDto;
@@ -34,7 +34,7 @@ public class StockController {
      * @return TokenInfo
      */
     @PostMapping({"/accessToken"})
-    public ResponseEntity<ResultAPIDto<TokenInfo>> getAccessToken(@RequestBody ApiCredentialsRequest request, HttpSession session) {
+    public ResponseEntity<ResultAPIDto<TokenInfo>> getAccessToken(@RequestBody ApiCredentialsRequestDto request, HttpSession session) {
         try {
             TokenInfo tokenInfo = new TokenInfo(request.getAppKey(), request.getAppSecret());
             stockService.getAccessToken(tokenInfo, session);
