@@ -1,11 +1,16 @@
 package com.flab.mars.api.controller;
 
 import com.flab.mars.api.dto.request.ApiCredentialsRequest;
+import com.flab.mars.api.dto.request.StockFluctuationRequestDTO;
 import com.flab.mars.api.dto.response.ResultAPIDto;
+import com.flab.mars.api.dto.response.StockFluctuationResponseDTO;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.TokenInfo;
+import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
+import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,9 +36,10 @@ public class StockController {
     @PostMapping({"/accessToken"})
     public ResponseEntity<ResultAPIDto<TokenInfo>> getAccessToken(@RequestBody ApiCredentialsRequest request, HttpSession session) {
         try {
-            TokenInfo tokenInfo = stockService.getAccessToken(request.getAppKey(), request.getAppSecret(), session);
+            TokenInfo tokenInfo = new TokenInfo(request.getAppKey(), request.getAppSecret());
+            stockService.getAccessToken(tokenInfo, session);
             return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", tokenInfo));
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             // 로그 남기기
             log.info(e.getMessage());
             if (e.getMessage().contains("403")) {
@@ -43,13 +49,35 @@ public class StockController {
         }
 
         // 기타 실패 응답 처리
-       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResultAPIDto.res(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResultAPIDto.res(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"));
     }
 
     @GetMapping("/quotations/inquire-price")
     public ResponseEntity<ResultAPIDto<StockPrice>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
         StockPrice stockPrice = stockService.getStockPrice(stockCode, session);
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPrice));
+    }
+
+    @GetMapping("/domestic-stock/ranking/fluctuation")
+    public ResponseEntity<ResultAPIDto<StockFluctuationResponseDTO>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDTO request, HttpSession session) {
+
+        StockFluctuationRequestVO vo = StockFluctuationRequestVO.builder()
+                .fidInputIscd(request.getFidInputIscd())  // 기본값: "0001"
+                .fidRankSortClsCode(request.getFidRankSortClsCode())  // 기본값: "0"
+                .fidInputCnt1(request.getFidInputCnt1())  // 기본값: "0"
+                .fidPrcClsCode(request.getFidPrcClsCode())  // 기본값: "0"
+                .fidInputPrice1(request.getFidInputPrice1())  // 기본값: ""
+                .fidInputPrice2(request.getFidInputPrice2())  // 기본값: ""
+                .fidVolCnt(request.getFidVolCnt())  // 기본값: ""
+                .build();
+
+        String uri = vo.generateFluctuationRankingUri();
+
+        StockFluctuationResponseVO response = stockService.getFluctuationRanking(uri, session);
+        StockFluctuationResponseDTO dto = StockFluctuationResponseDTO.toDTO(response);
+
+        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", dto));
+
     }
 
 }
