@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class StockFluctuationRequestDTO {
+public class StockFluctuationRequestDto {
 
     @Size(max = 12, message = "입력 종목코드는 12자이어야 합니다.")
     private String fidInputIscd = "0001";
