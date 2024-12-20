@@ -5,10 +5,10 @@ import com.flab.mars.api.dto.request.StockFluctuationRequestDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.api.dto.response.StockFluctuationResponseDto;
 import com.flab.mars.domain.service.StockService;
-import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.TokenInfo;
 import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.domain.vo.response.StockPriceResponseVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class StockController {
 
     /**
      * KIS 토큰 발급 요청, 1분당 하나 가능
-     * @param request
-     * @param session
+     * @param request 한화투자증권으로부터 발급받은 appKey, appSecret 값을 전달
+     * @param session 세션
      * @return TokenInfo
      */
     @PostMapping({"/accessToken"})
@@ -52,10 +52,16 @@ public class StockController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResultAPIDto.res(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"));
     }
 
+    /**
+     * 주식현재가 시세를 조회 및  db  에 저장한다.
+     * @param stockCode ex) 000660
+     * @param session 세션
+     * @return  주식현재가 ,  누적 거래 대금,  누적 거래량, 주식 시가, 주식 최고가,  주식 최저가 등을 반환
+     */
     @GetMapping("/quotations/inquire-price")
-    public ResponseEntity<ResultAPIDto<StockPrice>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
-        StockPrice stockPrice = stockService.getStockPrice(stockCode, session);
-        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPrice));
+    public ResponseEntity<ResultAPIDto<StockPriceResponseVO>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
+        StockPriceResponseVO stockPriceResponseVO = stockService.getStockPrice(stockCode, session);
+        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceResponseVO));
     }
 
     @GetMapping("/domestic-stock/ranking/fluctuation")

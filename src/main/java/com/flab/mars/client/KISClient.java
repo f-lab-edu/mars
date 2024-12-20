@@ -1,6 +1,5 @@
 package com.flab.mars.client;
 
-import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -49,7 +48,7 @@ public class KISClient {
 
     }
 
-    public StockPrice getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {
+    public KisPriceResponseVO getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(INQUIRE_PRICE)
                         .queryParam("FID_COND_MRKT_DIV_CODE", "J")
@@ -63,7 +62,7 @@ public class KISClient {
                     headers.setContentType(MediaType.APPLICATION_JSON);
                 })
                 .retrieve()
-                .bodyToMono(StockPrice.class)
+                .bodyToMono(KisPriceResponseVO.class)
                 .block();
     }
 
