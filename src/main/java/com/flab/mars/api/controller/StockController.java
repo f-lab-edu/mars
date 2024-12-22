@@ -4,11 +4,12 @@ import com.flab.mars.api.dto.request.ApiCredentialsRequestDto;
 import com.flab.mars.api.dto.request.StockFluctuationRequestDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.api.dto.response.StockFluctuationResponseDto;
+import com.flab.mars.api.dto.response.StockPriceResponseDto;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.TokenInfo;
 import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
+import com.flab.mars.domain.vo.response.PriceDataResponseVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
-import com.flab.mars.domain.vo.response.StockPriceResponseVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +60,10 @@ public class StockController {
      * @return  주식현재가 ,  누적 거래 대금,  누적 거래량, 주식 시가, 주식 최고가,  주식 최저가 등을 반환
      */
     @GetMapping("/quotations/inquire-price")
-    public ResponseEntity<ResultAPIDto<StockPriceResponseVO>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
-        StockPriceResponseVO stockPriceResponseVO = stockService.getStockPrice(stockCode, session);
-        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceResponseVO));
+    public ResponseEntity<ResultAPIDto<StockPriceResponseDto>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
+        PriceDataResponseVO stockPriceResponseVO = stockService.getStockPrice(stockCode, session);
+        StockPriceResponseDto responseDto = StockPriceResponseDto.from(stockPriceResponseVO);
+        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", responseDto));
     }
 
     @GetMapping("/domestic-stock/ranking/fluctuation")

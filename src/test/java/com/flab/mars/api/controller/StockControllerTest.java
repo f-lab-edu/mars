@@ -2,11 +2,12 @@ package com.flab.mars.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.api.dto.request.ApiCredentialsRequestDto;
+import com.flab.mars.api.dto.response.StockPriceResponseDto;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.TokenInfo;
+import com.flab.mars.domain.vo.response.PriceDataResponseVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
-import com.flab.mars.domain.vo.response.StockPriceResponseVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -76,10 +77,10 @@ class StockControllerTest {
     void testGetStockPrice_Success() throws Exception {
         // Arrange
         String stockCode = "12345";
-        StockPriceResponseVO stockPriceResponseVO = new StockPriceResponseVO(new StockPriceResponseVO.Output());
+        PriceDataResponseVO priceDataResponseVO = new PriceDataResponseVO();
 
         // Mock stockService.getStockPrice() 메서드
-        when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(stockPriceResponseVO);
+        when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(priceDataResponseVO);
 
         // Act & Assert
         mockMvc.perform(get("/api/stock/quotations/inquire-price")
