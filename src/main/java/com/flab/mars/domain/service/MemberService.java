@@ -4,10 +4,16 @@ package com.flab.mars.domain.service;
 import com.flab.mars.db.entity.MemberEntity;
 import com.flab.mars.db.repository.MemberRepository;
 import com.flab.mars.domain.vo.CreateMember;
+import com.flab.mars.domain.vo.MemberInfoVO;
+import com.flab.mars.domain.vo.TokenInfo;
+import com.flab.mars.support.SessionUtil;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +66,19 @@ public class MemberService {
     }
 
 
+    public boolean login(String email, String pw, TokenInfo tokenInfo, HttpSession session) {
 
+        Optional<MemberEntity> memberOptionl = memberRepository.findByEmail(email);
+        if(memberOptionl.isEmpty()) return false;
 
+        MemberEntity memberEntity = memberOptionl.get();
+
+        // 비밀번호 검사
+        if(!passwordEncoder.matches(pw, memberEntity.getPw())) return false;
+
+        // 로그인 처리
+        SessionUtil.setSessionValue(session, SessionUtil.ROLE, MemberInfoVO.createMemberInfoVO(memberEntity, tokenInfo));
+
+        return true;
+    }
 }

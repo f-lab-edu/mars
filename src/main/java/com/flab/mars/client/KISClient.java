@@ -1,14 +1,17 @@
 package com.flab.mars.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.exception.BadWebClientRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +27,8 @@ public class KISClient {
 
     private final WebClient webClient;
 
+    private final ObjectMapper mapper;
+
     public String getAccessToken(String appKey, String appSecret, String grantType) {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("grant_type", grantType);
@@ -35,18 +40,20 @@ public class KISClient {
                 .headers(headers -> headers.setContentType(MediaType.APPLICATION_JSON))
                 .bodyValue(requestBody)
                 .retrieve()
-                .onStatus(
-                        status -> status == HttpStatus.FORBIDDEN, // 403 상태 코드만 체크
-                        response -> response.bodyToMono(String.class)
-                                .flatMap(errorBody -> Mono.error(new RuntimeException(
-                                        "403 오류: 접근이 거부되었습니다. 오류 메시지: " + errorBody
-                                ))))
+                .onStatus(HttpStatusCode::isError, this::handleClientError) // 4xx, 5xx 에러 처리
                 .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                 .block();
 
         assert result != null;
         return result.get("access_token");
 
+    }
+
+    private Mono<Throwable> handleClientError(ClientResponse clientResponse) {
+        HttpStatusCode status = clientResponse.statusCode();
+        return clientResponse.bodyToMono(String.class)
+                .flatMap(body -> Mono.error(new BadWebClientRequestException(
+                        body, status, mapper)));
     }
 
     public StockPrice getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {

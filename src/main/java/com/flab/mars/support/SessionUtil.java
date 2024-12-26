@@ -1,22 +1,23 @@
 package com.flab.mars.support;
 
-import com.flab.mars.domain.vo.TokenInfo;
+import com.flab.mars.domain.vo.MemberInfoVO;
 import jakarta.servlet.http.HttpSession;
 
 public class SessionUtil {
 
-    public static final String ROLE = "tokenInfo";
+    public static final String ROLE = "sessionUser";
 
     private SessionUtil() {
         throw new AssertionError("Cannot instantiate utility class");
     }
 
-    public static void setSessionAccessToKenValue(HttpSession session, TokenInfo tokenInfo) {
-        session.setAttribute(ROLE, tokenInfo);
+
+    public static void setSessionValue(HttpSession session, String key, Object value) {
+        session.setAttribute(key, value);
     }
 
-    public static TokenInfo getSessionAccessToKenValue(HttpSession session) {
-        return (TokenInfo) session.getAttribute(ROLE);
+    public static MemberInfoVO getSessionLoginUser(HttpSession session) {
+        return (MemberInfoVO) session.getAttribute(ROLE);
     }
 
 }
