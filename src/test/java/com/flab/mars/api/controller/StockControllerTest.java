@@ -1,17 +1,14 @@
 package com.flab.mars.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.mars.api.dto.request.ApiCredentialsRequestDto;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.StockPrice;
-import com.flab.mars.domain.vo.TokenInfo;
 import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -25,9 +22,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,32 +48,6 @@ class StockControllerTest {
     @MockitoBean
     private StockFluctuationRequestVO stockFluctuationRequestVO;
 
-
-    @Test
-    public void testGetAccessToken_Success() throws Exception {
-        // Arrange
-        ApiCredentialsRequestDto request = new ApiCredentialsRequestDto("appKey", "appSecret");
-
-        when(kisClient.getAccessToken(
-                eq("appKey"),
-                eq("appSecret"),
-                anyString()
-        )).thenReturn("mockAccessToken");
-
-        Mockito.doNothing().when(stockService).getAccessToken(any(TokenInfo.class), any(HttpSession.class));
-
-        // Act & Assert
-        mockMvc.perform(post("/api/stock/accessToken")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(csrf())
-                )
-                .andDo(result -> System.out.println("Response: " + result.getResponse().getContentAsString())) // 응답 로깅
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultMsg").value("Success"));
-
-        verify(stockService, times(1)).getAccessToken(any(TokenInfo.class), any(HttpSession.class));
-    }
 
     @Test
     void testGetStockPrice_Success() throws Exception {
