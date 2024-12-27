@@ -2,7 +2,7 @@ package com.flab.mars.api.controller;
 
 import com.flab.mars.api.dto.request.StockFluctuationRequestDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
-import com.flab.mars.api.dto.response.StockFluctuationResponseDto;
+import com.flab.mars.api.dto.response.StockFluctuationDto;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
@@ -31,7 +31,7 @@ public class StockController {
     }
 
     @GetMapping("/domestic-stock/ranking/fluctuation")
-    public ResponseEntity<ResultAPIDto<StockFluctuationResponseDto>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDto request, HttpSession session) {
+    public ResponseEntity<ResultAPIDto<StockFluctuationDto>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDto request, HttpSession session) {
 
         StockFluctuationRequestVO vo = StockFluctuationRequestVO.builder()
                 .fidInputIscd(request.getFidInputIscd())  // 기본값: "0001"
@@ -46,7 +46,7 @@ public class StockController {
         String uri = vo.generateFluctuationRankingUri();
 
         StockFluctuationResponseVO response = stockService.getFluctuationRanking(uri, session);
-        StockFluctuationResponseDto dto = StockFluctuationResponseDto.toDTO(response);
+        StockFluctuationDto dto = StockFluctuationDto.toDTO(response);
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", dto));
 

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockFluctuationResponseDto {
+public class StockFluctuationDto {
     private List<StockFluctuation> output;
 
     @Data
@@ -27,7 +27,7 @@ public class StockFluctuationResponseDto {
         private String priceChangeRate;
     }
 
-    public static StockFluctuationResponseDto toDTO(StockFluctuationResponseVO vo) {
+    public static StockFluctuationDto toDTO(StockFluctuationResponseVO vo) {
         List<StockFluctuation> stockFluctuations = vo.getOutput().stream()
                 .map(stockFluctuationVO -> new StockFluctuation(
                         stockFluctuationVO.getStockCode(),
@@ -40,6 +40,6 @@ public class StockFluctuationResponseDto {
                 ))
                 .collect(Collectors.toList());
 
-        return new StockFluctuationResponseDto(stockFluctuations);
+        return new StockFluctuationDto(stockFluctuations);
     }
 }
