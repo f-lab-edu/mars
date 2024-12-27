@@ -5,7 +5,6 @@ import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.StockPrice;
-import com.flab.mars.domain.vo.request.StockFluctuationRequestVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
@@ -44,10 +43,6 @@ class StockControllerTest {
 
     @MockitoBean
     private KISConfig kisConfig;
-
-    @MockitoBean
-    private StockFluctuationRequestVO stockFluctuationRequestVO;
-
 
     @Test
     void testGetStockPrice_Success() throws Exception {
