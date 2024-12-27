@@ -2,6 +2,7 @@ package com.flab.mars.domain.service;
 
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
+import com.flab.mars.client.dto.KISFluctuationResponseDto;
 import com.flab.mars.domain.vo.MemberInfoVO;
 import com.flab.mars.domain.vo.StockPrice;
 import com.flab.mars.domain.vo.TokenInfo;
@@ -56,7 +57,8 @@ public class StockService {
             throw new AuthException("로그인에 실패했습니다. ACCESS 토큰을 가져올 수 없습니다.");
         }
 
-        return kisClient.getFluctuationRanking(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), url);
+        KISFluctuationResponseDto fluctuationRanking = kisClient.getFluctuationRanking(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), url);
+        return StockFluctuationResponseVO.dtoToVO(fluctuationRanking);
 
     }
 }

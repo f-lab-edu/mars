@@ -29,6 +29,13 @@ public class StockController {
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPrice));
     }
 
+    /**
+     * 국내주식 등락률 순위
+     * 최대 30건 확인 가능하며, 다음 조회가 불가합니다.
+     * @param request
+     * @param session
+     * @return
+     */
     @GetMapping("/domestic-stock/ranking/fluctuation")
     public ResponseEntity<ResultAPIDto<StockFluctuationDto>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDto request, HttpSession session) {
 

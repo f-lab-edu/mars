@@ -1,8 +1,8 @@
 package com.flab.mars.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flab.mars.client.dto.KISFluctuationResponseDto;
 import com.flab.mars.domain.vo.StockPrice;
-import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import com.flab.mars.exception.BadWebClientRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -74,7 +74,7 @@ public class KISClient {
                 .block();
     }
 
-    public StockFluctuationResponseVO getFluctuationRanking(String accessToken, String appKey, String appSecret, String uri) {
+    public KISFluctuationResponseDto getFluctuationRanking(String accessToken, String appKey, String appSecret, String uri) {
         return  webClient.method(HttpMethod.GET)
                 .uri(uri)
                 .headers(headers -> {
@@ -85,7 +85,7 @@ public class KISClient {
                     headers.set("custtype", "P"); // 고객 타입  P : 개인, B : 법인
                 })
                 .retrieve()
-                .bodyToMono(StockFluctuationResponseVO.class)
+                .bodyToMono(KISFluctuationResponseDto.class)
                 .block(); // 블록해서 결과를 가져옴
     }
 }

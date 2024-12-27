@@ -1,40 +1,61 @@
 package com.flab.mars.domain.vo.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.flab.mars.client.dto.KISFluctuationResponseDto;
+import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Getter
+@ToString(callSuper = true)
 public class StockFluctuationResponseVO extends BaseResponseVO {
-    @JsonProperty("output")
     private List<StockFluctuationVO> output;
 
 
-    @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @Getter
+    @Builder
+    @ToString
     public static class StockFluctuationVO {
-        @JsonProperty("stck_shrn_iscd")
+
         private String stockCode;
-        @JsonProperty("data_rank")
+
         private String dataRank;
-        @JsonProperty("hts_kor_isnm")
+
         private String stockName;
-        @JsonProperty("stck_prpr")
+
         private String stockPrice;
-        @JsonProperty("prdy_vrss")
+
         private String priceChange;
-        @JsonProperty("prdy_vrss_sign")
+
         private String priceChangeSign;
-        @JsonProperty("prdy_ctrt")
+
         private String priceChangeRate;
     }
+
+    public static StockFluctuationResponseVO dtoToVO(KISFluctuationResponseDto kisDto) {
+        Objects.requireNonNull(kisDto, "KISFluctuationResponseDto cannot be null");
+
+        List<StockFluctuationResponseVO.StockFluctuationVO> output = kisDto.getOutput().stream()
+                .map(dto -> StockFluctuationVO.builder()
+                    .stockCode(dto.getStockCode())
+                    .dataRank(dto.getDataRank())
+                    .stockName(dto.getStockName())
+                    .stockPrice(dto.getStockPrice())
+                    .priceChange(dto.getPriceChange())
+                    .priceChangeSign(dto.getPriceChangeSign())
+                    .priceChangeRate(dto.getPriceChangeRate())
+                    .build()
+                )
+                .collect(Collectors.toList());
+
+        return new StockFluctuationResponseVO(output);
+    }
+
 }
