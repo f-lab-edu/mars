@@ -3,8 +3,9 @@ package com.flab.mars.domain.service;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.client.dto.KISFluctuationResponseDto;
+import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.domain.vo.MemberInfoVO;
-import com.flab.mars.domain.vo.StockPrice;
+import com.flab.mars.domain.vo.StockPriceVO;
 import com.flab.mars.domain.vo.TokenInfo;
 import com.flab.mars.domain.vo.response.AccessTokenResponseVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
@@ -40,14 +41,15 @@ public class StockService {
         }
     }
 
-    public StockPrice getStockPrice(String stockCode, HttpSession session) {
+    public StockPriceVO getStockPrice(String stockCode, HttpSession session) {
         MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
 
         if(sessionLoginUser == null || sessionLoginUser.getAccessToken() == null) {
             throw new AuthException("로그인에 실패했습니다. ACCESS 토큰을 가져올 수 없습니다.");
         }
 
-        return kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
+        KisStockPriceDto stockPrice = kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
+        return StockPriceVO.from(stockPrice);
     }
 
     public StockFluctuationResponseVO getFluctuationRanking(String url, HttpSession session) {

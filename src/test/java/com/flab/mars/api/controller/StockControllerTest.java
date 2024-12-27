@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
-import com.flab.mars.domain.vo.StockPrice;
+import com.flab.mars.domain.vo.StockPriceVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class StockControllerTest {
     void testGetStockPrice_Success() throws Exception {
         // Arrange
         String stockCode = "12345";
-        StockPrice stockPrice = new StockPrice("00", "Success", new StockPrice.Output("100000")); // 예시로 100000 설정
+        StockPriceVO stockPrice = new StockPriceVO(  new StockPriceVO.Output("100000")); // 예시로 100000 설정
 
         // Mock stockService.getStockPrice() 메서드
         when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(stockPrice);
@@ -67,14 +67,10 @@ class StockControllerTest {
     @Test
     void testGetFluctuationRanking_Success() throws Exception {
         // Given
-        StockFluctuationResponseVO mockResponse = new StockFluctuationResponseVO();
         List<StockFluctuationResponseVO.StockFluctuationVO> stockFluctuations = new ArrayList<>();
-
-        // Mock data
         stockFluctuations.add(new StockFluctuationResponseVO.StockFluctuationVO(
                 "AAPL", "1", "Apple Inc.", "145.00", "1.50", "+", "1.04"));
-
-        mockResponse.setOutput(stockFluctuations); // Set the output field properly
+        StockFluctuationResponseVO mockResponse = new StockFluctuationResponseVO(stockFluctuations);
 
         // Mocking the service call
         when(stockService.getFluctuationRanking(anyString(), any())).thenReturn(mockResponse);

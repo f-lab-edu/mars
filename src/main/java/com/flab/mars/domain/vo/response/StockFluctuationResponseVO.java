@@ -10,10 +10,9 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @ToString(callSuper = true)
-public class StockFluctuationResponseVO extends BaseResponseVO {
+public class StockFluctuationResponseVO {
     private List<StockFluctuationVO> output;
 
 

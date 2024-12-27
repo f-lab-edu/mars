@@ -2,7 +2,7 @@ package com.flab.mars.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.client.dto.KISFluctuationResponseDto;
-import com.flab.mars.domain.vo.StockPrice;
+import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.exception.BadWebClientRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -56,7 +56,7 @@ public class KISClient {
                         body, status, mapper)));
     }
 
-    public StockPrice getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {
+    public KisStockPriceDto getStockPrice(String accessToken, String appKey, String appSecret, String stockCode) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(INQUIRE_PRICE)
                         .queryParam("FID_COND_MRKT_DIV_CODE", "J")
@@ -70,7 +70,7 @@ public class KISClient {
                     headers.setContentType(MediaType.APPLICATION_JSON);
                 })
                 .retrieve()
-                .bodyToMono(StockPrice.class)
+                .bodyToMono(KisStockPriceDto.class)
                 .block();
     }
 
