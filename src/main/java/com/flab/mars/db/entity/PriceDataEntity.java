@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Table(name = "price_data")
 public class PriceDataEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
