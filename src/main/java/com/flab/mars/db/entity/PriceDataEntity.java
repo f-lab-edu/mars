@@ -35,5 +35,11 @@ public class PriceDataEntity {
     @Column(name = "stock_business_date")
     private LocalDate stockBusinessDate; // 주식 영업일자
 
+    @PrePersist
+    public void prePersist() {
+        if (stockBusinessDate == null) {
+            this.stockBusinessDate = LocalDate.now();
+        }
+    }
 
 }

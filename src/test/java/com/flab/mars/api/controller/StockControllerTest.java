@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
-import com.flab.mars.domain.vo.StockPriceVO;
+import com.flab.mars.domain.vo.response.PriceDataResponseVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class StockControllerTest {
     void testGetStockPrice_Success() throws Exception {
         // Arrange
         String stockCode = "12345";
-        StockPriceVO stockPrice = new StockPriceVO(  new StockPriceVO.Output("100000")); // 예시로 100000 설정
+        PriceDataResponseVO stockPrice = new PriceDataResponseVO();
 
         // Mock stockService.getStockPrice() 메서드
         when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(stockPrice);
