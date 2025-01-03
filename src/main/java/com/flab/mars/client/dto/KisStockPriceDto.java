@@ -28,7 +28,7 @@ public class KisStockPriceDto {
         private String prdyVrss; // 전일 대비
 
         @JsonProperty("prdy_vrss_sign")
-        private String prdyVrssSign; // 전일 대비 부호
+        private String prdyVrssSign; // 전일 대비 부호 1 : 상한,  2 : 상승, 3 : 보합 ,4 : 하한,  5 : 하락
 
         @JsonProperty("prdy_ctrt")
         private String prdyCtrt; // 전일 대비율

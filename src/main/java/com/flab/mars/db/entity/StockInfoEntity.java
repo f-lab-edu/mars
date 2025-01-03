@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "stock_info")
+@ToString
 public class StockInfoEntity {
     @Id
     @GeneratedValue
