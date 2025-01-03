@@ -26,6 +26,10 @@ public class StockController {
 
     @GetMapping("/quotations/inquire-price")
     public ResponseEntity<ResultAPIDto<StockPriceDto>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
+
+        //  등록된 주식인지 확인
+        if(!stockService.isValidStockCode(stockCode)) return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "조회할 수 없는 주식 코드입니다.", null));
+
         PriceDataResponseVO stockPrice = stockService.getStockPrice(stockCode, session);
         StockPriceDto stockPriceDto = StockPriceDto.from(stockPrice);
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceDto));

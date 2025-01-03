@@ -5,8 +5,9 @@ import com.flab.mars.client.KISConfig;
 import com.flab.mars.client.dto.KISFluctuationResponseDto;
 import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.db.entity.PriceDataEntity;
-import com.flab.mars.db.entity.PriceDataType;
+import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.PriceDataRepository;
+import com.flab.mars.db.repository.StockInfoRepository;
 import com.flab.mars.domain.vo.MemberInfoVO;
 import com.flab.mars.domain.vo.TokenInfo;
 import com.flab.mars.domain.vo.response.AccessTokenResponseVO;
@@ -22,10 +23,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class StockService {
 
     private final KISClient kisClient;
@@ -33,6 +37,8 @@ public class StockService {
     private final KISConfig kisConfig;
 
     private final PriceDataRepository priceDataRepository;
+
+    private final StockInfoRepository stockInfoRepository;
 
 
     public AccessTokenResponseVO getAccessToken(TokenInfo tokenInfo) {
@@ -47,34 +53,70 @@ public class StockService {
         }
     }
 
+    public boolean isValidStockCode(String stockCode) {
+        return stockInfoRepository.existsByStockCode(stockCode);
+    }
+
+    @Transactional
     public PriceDataResponseVO getStockPrice(String stockCode, HttpSession session) {
         MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
 
         if(sessionLoginUser == null || sessionLoginUser.getAccessToken() == null) {
             throw new AuthException("로그인에 실패했습니다. ACCESS 토큰을 가져올 수 없습니다.");
         }
+
+        // 현재 시간을 분 단위로 얻기
+        LocalDateTime currentTime = LocalDateTime.now().withSecond(0).withNano(0); // 초 단위 제거
+
+        Optional<PriceDataEntity> priceDataEntity = priceDataRepository.findByStockCodeAndDateTime(stockCode, currentTime);
+
+        if(priceDataEntity.isPresent()) {
+            // DB 에 값이 있는 경우
+            return PriceDataResponseVO.toVO(priceDataEntity.get());
+        }
+
         KisStockPriceDto stockPrice = kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
 
-        return insertCurrentStockPrice(stockPrice, stockCode);
+        return insertCurrentStockPrice(stockPrice, stockCode, currentTime);
     }
 
-    @Transactional
-    public PriceDataResponseVO insertCurrentStockPrice(KisStockPriceDto stockPrice, String stockCode) {
 
+    public PriceDataResponseVO insertCurrentStockPrice(KisStockPriceDto stockPrice, String stockCode, LocalDateTime currentTime) {
+
+        StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
+                .orElseThrow(() -> new IllegalArgumentException("StockCode not found: " + stockCode));
+
+        KisStockPriceDto.Output output = stockPrice.getOutput();
         PriceDataEntity priceDataEntity = PriceDataEntity.builder()
-                .dataType(PriceDataType.MINUTE)             // 분
-                .currentPrice(stockPrice.getOutput().getStckPrpr())       // 현재가
-                .openPrice(stockPrice.getOutput().getStckOprc())       // 주식 시가
-                .highPrice(stockPrice.getOutput().getStckHgpr())       // 주식 최고가
-                .lowPrice(stockPrice.getOutput().getStckLwpr())        // 주식 최저가
-                .acmlVol(stockPrice.getOutput().getAcmlVol())          // 누적 거래량
-                .acmlTrPbmn(stockPrice.getOutput().getAcmlTrPbmn())    // 누적 거래 대금
+                .stockInfoEntity(stockInfoEntity)
+                .currentPrice(output.getStckPrpr())       // 현재가
+                .openPrice(output.getStckOprc())       // 주식 시가
+                .highPrice(output.getStckHgpr())       // 주식 최고가
+                .lowPrice(output.getStckLwpr())        // 주식 최저가
+                .acmlVol(output.getAcmlVol())          // 누적 거래량
+                .acmlTrPbmn(output.getAcmlTrPbmn())    // 누적 거래 대금
+                .prdyVrss(output.getPrdyVrss()) // 전일 대비 가격변화
+                .prdyVrssSign(mapPrdyVrssSignToSymbol(output.getPrdyVrssSign())) // 전일 대비 부호
+                .prdyCtrt(output.getPrdyCtrt()) // 전일 대비율
+                .dateTime(currentTime)
                 .build();
-
-
         PriceDataEntity savedPriceDataEntity = priceDataRepository.save(priceDataEntity);
 
         return PriceDataResponseVO.toVO(savedPriceDataEntity);
+    }
+
+    public String mapPrdyVrssSignToSymbol(String prdyVrssSign) {
+        switch (prdyVrssSign) {
+            case "1": // 상한
+            case "2": // 상승
+                return "+";
+            case "4": // 하한
+            case "5": // 하락
+                return "-";
+            case "3": // 보합
+            default:
+                return ""; // 기호 없음
+        }
     }
 
     public StockFluctuationResponseVO getFluctuationRanking(String url, HttpSession session) {
