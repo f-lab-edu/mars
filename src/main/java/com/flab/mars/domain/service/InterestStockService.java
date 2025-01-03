@@ -6,9 +6,12 @@ import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.InterestStockRepository;
 import com.flab.mars.db.repository.MemberRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
+import com.flab.mars.domain.vo.response.InterestStockResponseVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +50,9 @@ public class InterestStockService {
         return interestStockEntity.getId();
     }
 
+
+    public List<InterestStockResponseVO> getInterestStocks(Long memberId) {
+        return interestStockRepository.findInterestStocksWithLatestPrice(memberId);
+    }
 
 }
