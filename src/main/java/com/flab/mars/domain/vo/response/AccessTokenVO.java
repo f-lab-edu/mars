@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatusCode;
 
 @Getter
 @AllArgsConstructor
-public class AccessTokenResponseVO {
+public class AccessTokenVO {
     private boolean success;
     private String message;
     private HttpStatusCode statusCode;

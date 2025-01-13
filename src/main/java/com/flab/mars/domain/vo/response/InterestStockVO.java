@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class InterestStockResponseVO {
+public class InterestStockVO {
     private String stockCode;       // 주식 코드
     private String stockName;       // 주식 이름
     private String currentPrice;    // 현재가

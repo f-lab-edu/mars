@@ -1,6 +1,6 @@
 package com.flab.mars.api.dto.response;
 
-import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class StockFluctuationDto {
         private String priceChangeRate;
     }
 
-    public static StockFluctuationDto toDTO(StockFluctuationResponseVO vo) {
+    public static StockFluctuationDto toDTO(StockFluctuationVO vo) {
         List<StockFluctuation> stockFluctuations = vo.getOutput().stream()
                 .map(stockFluctuationVO -> new StockFluctuation(
                         stockFluctuationVO.getStockCode(),

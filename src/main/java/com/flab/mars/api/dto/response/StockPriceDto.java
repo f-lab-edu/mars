@@ -1,6 +1,6 @@
 package com.flab.mars.api.dto.response;
 
-import com.flab.mars.domain.vo.response.PriceDataResponseVO;
+import com.flab.mars.domain.vo.response.PriceDataVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,16 +24,16 @@ public class StockPriceDto {
     private LocalDateTime dateTime;
 
 
-    public static StockPriceDto from(PriceDataResponseVO priceDataResponseVO) {
+    public static StockPriceDto from(PriceDataVO priceDataVO) {
         return new StockPriceDto(
-                priceDataResponseVO.getId(),
-                priceDataResponseVO.getStockInfoId(),
-                priceDataResponseVO.getCurrentPrice(),
-                priceDataResponseVO.getOpenPrice(),
-                priceDataResponseVO.getClosePrice(),
-                priceDataResponseVO.getHighPrice(),
-                priceDataResponseVO.getLowPrice(),
-                priceDataResponseVO.getDateTime());
+                priceDataVO.getId(),
+                priceDataVO.getStockInfoId(),
+                priceDataVO.getCurrentPrice(),
+                priceDataVO.getOpenPrice(),
+                priceDataVO.getClosePrice(),
+                priceDataVO.getHighPrice(),
+                priceDataVO.getLowPrice(),
+                priceDataVO.getDateTime());
 
     }
 }

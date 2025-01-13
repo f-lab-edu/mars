@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
-public class PriceDataResponseVO {
+public class PriceDataVO {
 
     private Long id;
 
@@ -31,8 +31,8 @@ public class PriceDataResponseVO {
     private LocalDateTime dateTime;
 
 
-    public static PriceDataResponseVO toVO(PriceDataEntity entity) {
-        return PriceDataResponseVO.builder()
+    public static PriceDataVO toVO(PriceDataEntity entity) {
+        return PriceDataVO.builder()
                 .id(entity.getId())
                 .stockInfoId(entity.getStockInfoEntity().getId())
                 .currentPrice(new BigDecimal(entity.getCurrentPrice()))

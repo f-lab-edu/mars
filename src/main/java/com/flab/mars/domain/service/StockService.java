@@ -1,6 +1,5 @@
 package com.flab.mars.domain.service;
 
-import com.flab.mars.client.KISApiUrls;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.client.dto.KISFluctuationResponseDto;
@@ -11,9 +10,9 @@ import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
 import com.flab.mars.domain.vo.MemberInfoVO;
 import com.flab.mars.domain.vo.TokenInfo;
-import com.flab.mars.domain.vo.response.AccessTokenResponseVO;
-import com.flab.mars.domain.vo.response.PriceDataResponseVO;
-import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.domain.vo.response.AccessTokenVO;
+import com.flab.mars.domain.vo.response.PriceDataVO;
+import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import com.flab.mars.exception.AuthException;
 import com.flab.mars.exception.BadWebClientRequestException;
 import com.flab.mars.support.SessionUtil;
@@ -23,12 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -46,20 +41,20 @@ public class StockService {
     private final StockInfoRepository stockInfoRepository;
 
 
-    public AccessTokenResponseVO getAccessToken(TokenInfo tokenInfo) {
+    public AccessTokenVO getAccessToken(TokenInfo tokenInfo) {
 
         try {
             String accessToken = kisClient.getAccessToken(tokenInfo.getAppKey(), tokenInfo.getAppSecret(), kisConfig.getGrantType());
             tokenInfo.setAccessToken(accessToken);
-            return new AccessTokenResponseVO(true, "AccessToken 발급 성공", HttpStatus.OK, accessToken);
+            return new AccessTokenVO(true, "AccessToken 발급 성공", HttpStatus.OK, accessToken);
         } catch (BadWebClientRequestException e) {
             log.error("AccessToken 발급 실패 : {}", e.getErrorDescription());
-            return new AccessTokenResponseVO(false, e.getErrorDescription(), e.getStatusCode(), null);
+            return new AccessTokenVO(false, e.getErrorDescription(), e.getStatusCode(), null);
         }
     }
 
     @Transactional
-    public PriceDataResponseVO getStockPrice(String stockCode, HttpSession session) {
+    public PriceDataVO getStockPrice(String stockCode, HttpSession session) {
         MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
 
         if(sessionLoginUser == null || sessionLoginUser.getAccessToken() == null) {
@@ -77,7 +72,7 @@ public class StockService {
 
         if(priceDataEntity.isPresent()) {
             // DB 에 값이 있는 경우
-            return PriceDataResponseVO.toVO(priceDataEntity.get());
+            return PriceDataVO.toVO(priceDataEntity.get());
         }
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
@@ -86,7 +81,7 @@ public class StockService {
     }
 
 
-    public PriceDataResponseVO insertCurrentStockPrice(KisStockPriceDto stockPrice, String stockCode, LocalDateTime currentTime) {
+    public PriceDataVO insertCurrentStockPrice(KisStockPriceDto stockPrice, String stockCode, LocalDateTime currentTime) {
 
         StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
                 .orElseThrow(() -> new IllegalArgumentException("StockCode not found: " + stockCode));
@@ -107,7 +102,7 @@ public class StockService {
                 .build();
         PriceDataEntity savedPriceDataEntity = priceDataRepository.save(priceDataEntity);
 
-        return PriceDataResponseVO.toVO(savedPriceDataEntity);
+        return PriceDataVO.toVO(savedPriceDataEntity);
     }
 
     public String mapPrdyVrssSignToSymbol(String prdyVrssSign) {
@@ -124,7 +119,7 @@ public class StockService {
         }
     }
 
-    public StockFluctuationResponseVO getFluctuationRanking(String url, HttpSession session) {
+    public StockFluctuationVO getFluctuationRanking(String url, HttpSession session) {
         MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
 
         if(sessionLoginUser == null || sessionLoginUser.getAccessToken() == null) {
@@ -132,7 +127,7 @@ public class StockService {
         }
 
         KISFluctuationResponseDto fluctuationRanking = kisClient.getFluctuationRanking(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), url);
-        return StockFluctuationResponseVO.dtoToVO(fluctuationRanking);
+        return StockFluctuationVO.dtoToVO(fluctuationRanking);
 
     }
 }

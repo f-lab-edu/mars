@@ -6,7 +6,7 @@ import com.flab.mars.api.dto.response.InterestStockDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.domain.service.InterestStockService;
 import com.flab.mars.domain.vo.MemberInfoVO;
-import com.flab.mars.domain.vo.response.InterestStockResponseVO;
+import com.flab.mars.domain.vo.response.InterestStockVO;
 import com.flab.mars.support.SessionUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -53,7 +53,7 @@ public class InterestStockController {
         if(sessionLoginUser == null) return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.UNAUTHORIZED, "로그인 후 이용하여 주세요.", null ));
 
         // member_id 로 관심 주식 가져오기
-        List<InterestStockResponseVO> interestStocks = interestStockService.getInterestStocks(sessionLoginUser.getId());
+        List<InterestStockVO> interestStocks = interestStockService.getInterestStocks(sessionLoginUser.getId());
 
         // DTO 변환
         List<InterestStockDto> list = interestStocks.stream()

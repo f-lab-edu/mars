@@ -3,7 +3,7 @@ package com.flab.mars.db.repository;
 import com.flab.mars.db.entity.InterestStockEntity;
 import com.flab.mars.db.entity.MemberEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
-import com.flab.mars.domain.vo.response.InterestStockResponseVO;
+import com.flab.mars.domain.vo.response.InterestStockVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +15,7 @@ public interface InterestStockRepository extends JpaRepository<InterestStockEnti
     Optional<InterestStockEntity> findByMemberAndStockInfo(MemberEntity member, StockInfoEntity stockInfo);
 
     @Query("""
-    SELECT new com.flab.mars.domain.vo.response.InterestStockResponseVO(
+    SELECT new com.flab.mars.domain.vo.response.InterestStockVO(
         s.stockCode,
         s.stockName,
         pd.currentPrice,
@@ -36,6 +36,6 @@ public interface InterestStockRepository extends JpaRepository<InterestStockEnti
         )
     WHERE is.member.id = :memberId
 """)
-    List<InterestStockResponseVO> findInterestStocksWithLatestPrice(@Param("memberId") Long memberId);
+    List<InterestStockVO> findInterestStocksWithLatestPrice(@Param("memberId") Long memberId);
 
 }
