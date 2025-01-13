@@ -7,6 +7,7 @@ import com.flab.mars.api.dto.response.StockPriceDto;
 import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.response.PriceDataResponseVO;
 import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.exception.AuthException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,17 @@ public class StockController {
     @GetMapping("/quotations/inquire-price")
     public ResponseEntity<ResultAPIDto<StockPriceDto>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
 
-        //  등록된 주식인지 확인
-        if(!stockService.isValidStockCode(stockCode)) return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "조회할 수 없는 주식 코드입니다.", null));
+        PriceDataResponseVO stockPrice = null;
+        try {
+            stockPrice = stockService.getStockPrice(stockCode, session);
+        } catch (AuthException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ResultAPIDto.res(HttpStatus.UNAUTHORIZED, e.getMessage(), null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ResultAPIDto.res(HttpStatus.BAD_REQUEST, e.getMessage(), null));
+        }
 
-        PriceDataResponseVO stockPrice = stockService.getStockPrice(stockCode, session);
         StockPriceDto stockPriceDto = StockPriceDto.from(stockPrice);
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceDto));
     }

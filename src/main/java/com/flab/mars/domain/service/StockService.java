@@ -1,5 +1,6 @@
 package com.flab.mars.domain.service;
 
+import com.flab.mars.client.KISApiUrls;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.client.dto.KISFluctuationResponseDto;
@@ -22,8 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -53,10 +58,6 @@ public class StockService {
         }
     }
 
-    public boolean isValidStockCode(String stockCode) {
-        return stockInfoRepository.existsByStockCode(stockCode);
-    }
-
     @Transactional
     public PriceDataResponseVO getStockPrice(String stockCode, HttpSession session) {
         MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
@@ -65,6 +66,10 @@ public class StockService {
             throw new AuthException("로그인에 실패했습니다. ACCESS 토큰을 가져올 수 없습니다.");
         }
 
+        // 등록된 주식만 조회가능
+        if(stockInfoRepository.existsByStockCode(stockCode)) {
+            throw new IllegalArgumentException("조회할 수 없는 주식 코드입니다.");
+        }
         // 현재 시간을 분 단위로 얻기
         LocalDateTime currentTime = LocalDateTime.now().withSecond(0).withNano(0); // 초 단위 제거
 
