@@ -36,10 +36,7 @@ public class InterestStockController {
 
         if(sessionLoginUser == null) return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.UNAUTHORIZED, "로그인 후 이용하여 주세요.", null ));
 
-        Long interestStockId  = interestStockService.registerInterestStock(sessionLoginUser.getId(), request.getStockCode(), request.getStockName());
-
-        // 중복 등록 방지
-        if(interestStockId == -1L)  return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.CONFLICT, "This stock is already registered.", null));
+        long interestStockId = interestStockService.registerInterestStock(sessionLoginUser.getId(), request.getStockCode(), request.getStockName());
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", interestStockId ));
     }

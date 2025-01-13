@@ -9,9 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InterestStockRepository extends JpaRepository<InterestStockEntity, Long> {
-    boolean existsByMemberAndStockInfo(MemberEntity member, StockInfoEntity stockInfo);
+    Optional<InterestStockEntity> findByMemberAndStockInfo(MemberEntity member, StockInfoEntity stockInfo);
 
     @Query("""
     SELECT new com.flab.mars.domain.vo.response.InterestStockResponseVO(

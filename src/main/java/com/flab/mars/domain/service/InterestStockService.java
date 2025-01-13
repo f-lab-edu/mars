@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class InterestStockService {
 
 
     @Transactional
-    public Long registerInterestStock(Long userId, String stockCode, String stockName) {
+    public long registerInterestStock(Long userId, String stockCode, String stockName) {
         MemberEntity memberEntity = memberRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -36,9 +37,9 @@ public class InterestStockService {
                 });
 
         // 중복 관심 종목 등록 방지
-        boolean exists = interestStockRepository.existsByMemberAndStockInfo(memberEntity, stockInfoEntity);
-        if (exists) {
-            return -1L;
+        Optional<InterestStockEntity>  existingInterestStock  = interestStockRepository.findByMemberAndStockInfo(memberEntity, stockInfoEntity);
+        if (existingInterestStock.isPresent()) {
+            return existingInterestStock.get().getId(); // 중복된 관심 종목 엔티티의 아이디를 리턴
         }
         InterestStockEntity interestStockEntity = InterestStockEntity.builder()
                 .member(memberEntity)
