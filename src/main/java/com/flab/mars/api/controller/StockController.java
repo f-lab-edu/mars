@@ -41,8 +41,8 @@ public class StockController {
     @GetMapping("/domestic-stock/ranking/fluctuation")
     public ResponseEntity<ResultAPIDto<StockFluctuationDto>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDto request, HttpSession session) {
 
-        String uri = request.generateFluctuationRankingUri();
-        StockFluctuationResponseVO response = stockService.getFluctuationRanking(uri, session);
+        String queryParams  = request.buildQueryParams();
+        StockFluctuationResponseVO response = stockService.getFluctuationRanking(queryParams, session);
         StockFluctuationDto dto = StockFluctuationDto.toDTO(response);
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", dto));

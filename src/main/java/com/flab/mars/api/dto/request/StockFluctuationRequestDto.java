@@ -1,6 +1,5 @@
 package com.flab.mars.api.dto.request;
 
-import com.flab.mars.client.KISApiUrls;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,9 +45,8 @@ public class StockFluctuationRequestDto {
     private String fidRsflRate2 = ""; // Default: ""
 
 
-    public String generateFluctuationRankingUri() {
-        return UriComponentsBuilder
-                .fromUriString(KISApiUrls.RANKING_FLUCTUATION)
+    public String buildQueryParams() {
+        return UriComponentsBuilder.newInstance()
                 .queryParam("fid_input_iscd", fidInputIscd)
                 .queryParam("fid_rank_sort_cls_code", fidRankSortClsCode)
                 .queryParam("fid_input_cnt_1", fidInputCnt1)
