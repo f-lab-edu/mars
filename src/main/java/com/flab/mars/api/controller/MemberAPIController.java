@@ -1,21 +1,14 @@
 package com.flab.mars.api.controller;
 
 import com.flab.mars.api.dto.request.CreateMemberRequest;
-import com.flab.mars.api.dto.request.LoginRequestDto;
 import com.flab.mars.api.dto.request.UpdateMemberRequest;
 import com.flab.mars.api.dto.response.CreateMemberResponse;
-import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.api.dto.response.UpdateMemberResponse;
 import com.flab.mars.domain.service.MemberService;
-import com.flab.mars.domain.service.StockService;
 import com.flab.mars.domain.vo.CreateMember;
-import com.flab.mars.domain.vo.TokenInfo;
-import com.flab.mars.domain.vo.response.AccessTokenVO;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,26 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberAPIController {
 
     private final MemberService memberService;
-
-    private final StockService stockService;
-
-    @PostMapping("/login")
-    public ResponseEntity<ResultAPIDto<String>> login(@RequestBody @Valid LoginRequestDto request, HttpSession session) {
-
-        TokenInfo tokenInfo = new TokenInfo(request.getAppKey(), request.getAppSecret());
-        AccessTokenVO accessToken = stockService.getAccessToken(tokenInfo);
-
-        // 토큰 발급 실패시
-        if (accessToken.getStatusCode() != null && accessToken.getStatusCode().isError()) {
-            return ResponseEntity.badRequest().body(ResultAPIDto.res(HttpStatus.BAD_REQUEST, "토큰 발급 실패", accessToken.getMessage()));
-        }
-
-        if(!memberService.login(request.getEmail(), request.getPw(), tokenInfo, session)) {
-            return ResponseEntity.badRequest().body(ResultAPIDto.res(HttpStatus.BAD_REQUEST, "로그인 실패", "Failure"));
-        }
-
-        return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "로그인 성공", "Success"));
-    }
 
 
     /**
