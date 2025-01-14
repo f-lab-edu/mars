@@ -29,7 +29,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class StockService {
 
     private final KISClient kisClient;
@@ -62,7 +61,7 @@ public class StockService {
         }
 
         // 등록된 주식만 조회가능
-        StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다."));
+        StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));
 
         // 현재 시간을 분 단위로 얻기
         LocalDateTime currentTime = LocalDateTime.now().withSecond(0).withNano(0); // 초 단위 제거
@@ -76,14 +75,18 @@ public class StockService {
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
 
-        return insertCurrentStockPrice(stockPrice, stockCode, currentTime);
+        return saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
     }
 
 
-    public PriceDataVO insertCurrentStockPrice(KisStockPriceDto stockPrice, String stockCode, LocalDateTime currentTime) {
-
-        StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
-                .orElseThrow(() -> new IllegalArgumentException("StockCode not found: " + stockCode));
+    /**
+     * 현재 주식 가격을 DB에 저장합니다. (분 단위로 저장됨)
+     * @param stockPrice
+     * @param stockInfoEntity
+     * @param currentTime
+     * @return
+     */
+    private PriceDataVO saveCurrentStockPrice(KisStockPriceDto stockPrice, StockInfoEntity stockInfoEntity, LocalDateTime currentTime) {
 
         KisStockPriceDto.Output output = stockPrice.getOutput();
         PriceDataEntity priceDataEntity = PriceDataEntity.builder()
@@ -105,17 +108,13 @@ public class StockService {
     }
 
     public String mapPrdyVrssSignToSymbol(String prdyVrssSign) {
-        switch (prdyVrssSign) {
-            case "1": // 상한
-            case "2": // 상승
-                return "+";
-            case "4": // 하한
-            case "5": // 하락
-                return "-";
-            case "3": // 보합
-            default:
-                return ""; // 기호 없음
-        }
+        return switch (prdyVrssSign) {
+            case "1", "2" -> // 상승
+                    "+";
+            case "4", "5" ->  // 하락
+                    "-";
+            default -> ""; // 기호 없음
+        };
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, HttpSession session) {
