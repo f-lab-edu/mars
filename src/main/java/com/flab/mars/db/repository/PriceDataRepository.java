@@ -9,5 +9,7 @@ import java.util.Optional;
 
 public interface PriceDataRepository extends JpaRepository<PriceDataEntity, Long> {
 
-    Optional<PriceDataEntity> findByStockInfoEntityAndDateTime(StockInfoEntity stockInfo,LocalDateTime dateTime);
+    Optional<PriceDataEntity> findByStockInfoEntityAndDateTime(StockInfoEntity stockInfo, LocalDateTime dateTime);
+
+    Optional<PriceDataEntity> findTopByStockInfoEntityIdAndDateTimeAfterOrderByDateTimeDesc(Long stockInfoEntityId, LocalDateTime dateTimeAfter);
 }
