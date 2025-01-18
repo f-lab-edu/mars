@@ -5,8 +5,8 @@ import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.api.dto.response.StockFluctuationDto;
 import com.flab.mars.api.dto.response.StockPriceDto;
 import com.flab.mars.domain.service.StockService;
-import com.flab.mars.domain.vo.response.PriceDataResponseVO;
-import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.domain.vo.response.PriceDataVO;
+import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class StockController {
 
     @GetMapping("/quotations/inquire-price")
     public ResponseEntity<ResultAPIDto<StockPriceDto>> getStockPrice(@RequestParam(name = "stockCode") String stockCode, HttpSession session) {
-        PriceDataResponseVO stockPrice = stockService.getStockPrice(stockCode, session);
+        PriceDataVO stockPrice = stockService.getStockPrice(stockCode, session);
         StockPriceDto stockPriceDto = StockPriceDto.from(stockPrice);
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceDto));
     }
@@ -42,7 +42,7 @@ public class StockController {
     public ResponseEntity<ResultAPIDto<StockFluctuationDto>> getFluctuationRanking(@ModelAttribute @Valid StockFluctuationRequestDto request, HttpSession session) {
 
         String queryParams  = request.buildQueryParams();
-        StockFluctuationResponseVO response = stockService.getFluctuationRanking(queryParams, session);
+        StockFluctuationVO response = stockService.getFluctuationRanking(queryParams, session);
         StockFluctuationDto dto = StockFluctuationDto.toDTO(response);
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", dto));

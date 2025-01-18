@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 @ToString(callSuper = true)
-public class StockFluctuationResponseVO {
-    private List<StockFluctuationVO> output;
+public class StockFluctuationVO {
+    private List<StockFluctuationItemVO> output;
 
 
     @NoArgsConstructor
@@ -21,7 +21,7 @@ public class StockFluctuationResponseVO {
     @Getter
     @Builder
     @ToString
-    public static class StockFluctuationVO {
+    public static class StockFluctuationItemVO {
 
         private String stockCode;
 
@@ -38,11 +38,11 @@ public class StockFluctuationResponseVO {
         private String priceChangeRate;
     }
 
-    public static StockFluctuationResponseVO dtoToVO(KISFluctuationResponseDto kisDto) {
+    public static StockFluctuationVO dtoToVO(KISFluctuationResponseDto kisDto) {
         Objects.requireNonNull(kisDto, "KISFluctuationResponseDto cannot be null");
 
-        List<StockFluctuationResponseVO.StockFluctuationVO> output = kisDto.getOutput().stream()
-                .map(dto -> StockFluctuationVO.builder()
+        List<StockFluctuationItemVO> output = kisDto.getOutput().stream()
+                .map(dto -> StockFluctuationItemVO.builder()
                     .stockCode(dto.getStockCode())
                     .dataRank(dto.getDataRank())
                     .stockName(dto.getStockName())
@@ -54,7 +54,7 @@ public class StockFluctuationResponseVO {
                 )
                 .collect(Collectors.toList());
 
-        return new StockFluctuationResponseVO(output);
+        return new StockFluctuationVO(output);
     }
 
 }

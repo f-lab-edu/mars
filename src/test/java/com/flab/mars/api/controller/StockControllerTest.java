@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
-import com.flab.mars.domain.vo.response.PriceDataResponseVO;
-import com.flab.mars.domain.vo.response.StockFluctuationResponseVO;
+import com.flab.mars.domain.vo.response.PriceDataVO;
+import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,7 +49,7 @@ class StockControllerTest {
     void testGetStockPrice_Success() throws Exception {
         // Arrange
         String stockCode = "12345";
-        PriceDataResponseVO stockPrice = new PriceDataResponseVO();
+        PriceDataVO stockPrice = new PriceDataVO();
 
         // Mock stockService.getStockPrice() 메서드
         when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(stockPrice);
@@ -67,13 +68,13 @@ class StockControllerTest {
     @Test
     void testGetFluctuationRanking_Success() throws Exception {
         // Given
-        List<StockFluctuationResponseVO.StockFluctuationVO> stockFluctuations = new ArrayList<>();
-        stockFluctuations.add(new StockFluctuationResponseVO.StockFluctuationVO(
+        List<StockFluctuationVO.StockFluctuationItemVO> stockFluctuations = new ArrayList<>();
+        stockFluctuations.add(new StockFluctuationVO.StockFluctuationItemVO(
                 "AAPL", "1", "Apple Inc.", "145.00", "1.50", "+", "1.04"));
-        StockFluctuationResponseVO mockResponse = new StockFluctuationResponseVO(stockFluctuations);
+        StockFluctuationVO mockResponse = new StockFluctuationVO(stockFluctuations);
 
         // Mocking the service call
-        when(stockService.getFluctuationRanking(anyString(), any())).thenReturn(mockResponse);
+        when(stockService.getFluctuationRanking(any(), any())).thenReturn(mockResponse);
         // Act & Assert
         mockMvc.perform(get("/api/stock/domestic-stock/ranking/fluctuation")
                         .param("fidInputIscd", "0001")
