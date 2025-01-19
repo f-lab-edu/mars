@@ -10,7 +10,18 @@ public class KISApiUrls {
     /**
      * 접근토큰발급
      */
-    public static final String GET_TOKEN = BASE_URL + "/oauth2/tokenP";
+    public static final String GET_TOKEN = "/oauth2/tokenP";
+
+    /**
+     * 주식현재가 시세[v1_국내주식-008]
+     */
+    public static final String INQUIRE_PRICE = "/uapi/domestic-stock/v1/quotations/inquire-price";
+
+
+    /**
+     * 국내주식 등락률 순위[v1_국내주식-088]
+     */
+    public static final String RANKING_FLUCTUATION = "/uapi/domestic-stock/v1/ranking/fluctuation";
 
     private KISApiUrls() {
         throw new AssertionError("Cannot instantiate utility class");
