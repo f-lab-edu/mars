@@ -5,6 +5,12 @@ import com.flab.mars.db.entity.MemberEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface InterestStockRepository extends JpaRepository<InterestStockEntity, Long> {
-    boolean existsByMemberAndStockInfo(MemberEntity member, StockInfoEntity stockInfo);
+    Optional<InterestStockEntity> findByMemberAndStockInfo(MemberEntity member, StockInfoEntity stockInfo);
+
+    List<InterestStockEntity> findByMember(MemberEntity member);
+
 }
