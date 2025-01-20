@@ -8,7 +8,7 @@ import com.flab.mars.db.repository.MemberRepository;
 import com.flab.mars.domain.vo.CreateMember;
 import com.flab.mars.domain.vo.MemberInfoVO;
 import com.flab.mars.domain.vo.TokenInfo;
-import com.flab.mars.domain.vo.response.AccessTokenResponseVO;
+import com.flab.mars.domain.vo.response.AccessTokenVO;
 import com.flab.mars.exception.BadWebClientRequestException;
 import com.flab.mars.support.SessionUtil;
 import jakarta.servlet.http.HttpSession;
@@ -35,15 +35,15 @@ public class MemberService {
     private final KISConfig kisConfig;
 
 
-    public AccessTokenResponseVO getAccessToken(TokenInfo tokenInfo) {
+    public AccessTokenVO getAccessToken(TokenInfo tokenInfo) {
 
         try {
             String accessToken = kisClient.getAccessToken(tokenInfo.getAppKey(), tokenInfo.getAppSecret(), kisConfig.getGrantType());
             tokenInfo.setAccessToken(accessToken);
-            return new AccessTokenResponseVO(true, "AccessToken 발급 성공", HttpStatus.OK, accessToken);
+            return new AccessTokenVO(true, "AccessToken 발급 성공", HttpStatus.OK, accessToken);
         } catch (BadWebClientRequestException e) {
             log.error("AccessToken 발급 실패 : {}", e.getErrorDescription());
-            return new AccessTokenResponseVO(false, e.getErrorDescription(), e.getStatusCode(), null);
+            return new AccessTokenVO(false, e.getErrorDescription(), e.getStatusCode(), null);
         }
     }
 

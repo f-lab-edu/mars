@@ -9,7 +9,7 @@ import com.flab.mars.api.dto.response.UpdateMemberResponse;
 import com.flab.mars.domain.service.MemberService;
 import com.flab.mars.domain.vo.CreateMember;
 import com.flab.mars.domain.vo.TokenInfo;
-import com.flab.mars.domain.vo.response.AccessTokenResponseVO;
+import com.flab.mars.domain.vo.response.AccessTokenVO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class MemberAPIController {
     public ResponseEntity<ResultAPIDto<String>> login(@RequestBody @Valid LoginRequestDto request, HttpSession session) {
 
         TokenInfo tokenInfo = new TokenInfo(request.getAppKey(), request.getAppSecret());
-        AccessTokenResponseVO accessToken = memberService.getAccessToken(tokenInfo);
+        AccessTokenVO accessToken = memberService.getAccessToken(tokenInfo);
 
         // 토큰 발급 실패시
         if (accessToken.getStatusCode() != null && accessToken.getStatusCode().isError()) {
