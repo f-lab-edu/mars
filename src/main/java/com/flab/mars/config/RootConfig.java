@@ -11,7 +11,7 @@ public class RootConfig {
     @Bean
     public WebClient webClient(WebClient.Builder builder) {
         return builder.baseUrl(KISApiUrls.BASE_URL) // KIS API의 기본 URL 설정
-                .defaultHeader("Content-Type", "application/json") // 기본 헤더 설정
+                .defaultHeader("content-type", "application/json; charset=utf-8") // 기본 헤더 설정
                 .build();
     }
 }
