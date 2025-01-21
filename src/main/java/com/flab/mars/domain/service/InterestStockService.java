@@ -31,7 +31,7 @@ public class InterestStockService {
 
 
     @Transactional
-    public long registerInterestStock(Long userId, String stockCode, String stockName) {
+    public Long registerInterestStock(Long userId, String stockCode, String stockName) {
         MemberEntity memberEntity = memberRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
