@@ -20,8 +20,6 @@ public class InterestStockEntity {
     @JoinColumn(name = "stock_info_id")
     private StockInfoEntity stockInfo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private MemberEntity member;
+    private Long memberId;
 
 }

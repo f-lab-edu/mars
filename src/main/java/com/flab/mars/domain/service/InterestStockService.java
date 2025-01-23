@@ -1,11 +1,9 @@
 package com.flab.mars.domain.service;
 
 import com.flab.mars.db.entity.InterestStockEntity;
-import com.flab.mars.db.entity.MemberEntity;
 import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.InterestStockRepository;
-import com.flab.mars.db.repository.MemberRepository;
 import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
 import com.flab.mars.domain.vo.response.InterestStockVO;
@@ -25,15 +23,12 @@ import java.util.Optional;
 public class InterestStockService {
 
     private final InterestStockRepository interestStockRepository;
-    private final MemberRepository memberRepository;
     private final StockInfoRepository stockInfoRepository;
     private final PriceDataRepository priceDataRepository;
 
 
     @Transactional
     public Long registerInterestStock(Long userId, String stockCode, String stockName) {
-        MemberEntity memberEntity = memberRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 해당 주식이 저장되어 있지 않은 경우 insert
         StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
@@ -43,12 +38,12 @@ public class InterestStockService {
                 });
 
         // 중복 관심 종목 등록 방지
-        Optional<InterestStockEntity>  existingInterestStock  = interestStockRepository.findByMemberAndStockInfo(memberEntity, stockInfoEntity);
+        Optional<InterestStockEntity>  existingInterestStock  = interestStockRepository.findByMemberIdAndStockInfo(userId, stockInfoEntity);
         if (existingInterestStock.isPresent()) {
             return existingInterestStock.get().getId(); // 중복된 관심 종목 엔티티의 아이디를 리턴
         }
         InterestStockEntity interestStockEntity = InterestStockEntity.builder()
-                .member(memberEntity)
+                .memberId(userId)
                 .stockInfo(stockInfoEntity)
                 .build();
 
@@ -59,10 +54,8 @@ public class InterestStockService {
 
 
     public List<InterestStockVO> getInterestStocks(Long memberId) {
-        MemberEntity memberEntity = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<InterestStockEntity> interestStockEntities = interestStockRepository.findByMember(memberEntity);
+        List<InterestStockEntity> interestStockEntities = interestStockRepository.findByMemberId(memberId);
         LocalDate date = LocalDate.now();
         LocalDateTime dateTimeAfter = date.atStartOfDay();
         List<InterestStockVO> interestStockVOs = new ArrayList<>();
