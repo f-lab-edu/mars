@@ -1,11 +1,14 @@
 package com.flab.mars.domain.service;
 
+import com.flab.mars.client.KISClient;
+import com.flab.mars.client.dto.KisStockResponseDto;
 import com.flab.mars.db.entity.InterestStockEntity;
 import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.InterestStockRepository;
 import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
+import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.InterestStockVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,17 +28,30 @@ public class InterestStockService {
     private final InterestStockRepository interestStockRepository;
     private final StockInfoRepository stockInfoRepository;
     private final PriceDataRepository priceDataRepository;
+    private final KISClient kisClient;
 
 
     @Transactional
-    public Long registerInterestStock(Long userId, String stockCode, String stockName) {
+    public Long registerInterestStock(Long userId, String stockCode, TokenInfoVO token) {
 
-        // 해당 주식이 저장되어 있지 않은 경우 insert
-        StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
-                .orElseGet(() -> {
-                    StockInfoEntity stockInfo = new StockInfoEntity(stockCode, stockName);
-                    return stockInfoRepository.save(stockInfo);
-                });
+        // DB 에 해당 주식 코드 정보가 없는 경우
+        StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode).orElseGet(()-> {
+            // 주식 코드 유효성 검증
+            KisStockResponseDto verifyStock = kisClient.getStockName(token.getAccessToken(), token.getAppKey(), token.getAppSecret(), stockCode);
+            // 정상 응답이 아닌 경우
+            if (!"0".equals(verifyStock.getRtCd())) {
+                throw new IllegalArgumentException("유효하지 않은 주식 코드입니다 : " + stockCode + " ,  응답 메시지:  " + verifyStock.getMsg1());
+            }
+
+            if (verifyStock.getOutput() == null) {
+                throw new IllegalStateException(" 해당 주식 코드에 관련된 정보를 조회할 수 없습니다 : " + stockCode);
+            }
+
+            // 상품약어명
+            String stockName = verifyStock.getOutput().getPrdtAbrvName();
+            // 해당 주식이 저장되어 있지 않은 경우 insert
+            return stockInfoRepository.save(new StockInfoEntity(stockCode, stockName));
+        });
 
         // 중복 관심 종목 등록 방지
         Optional<InterestStockEntity>  existingInterestStock  = interestStockRepository.findByMemberIdAndStockInfo(userId, stockInfoEntity);

@@ -16,9 +16,17 @@ public class AddStockRequest {
     @NotBlank(message = "필수 항목입니다.")
     private String stockCode;
 
-    @NotBlank(message = "필수 항목입니다.")
-    private String stockName;
-
+    //TODO 회원 가입 및 회원 관련 로직 추후 고려
     @NotNull(message = "필수 항목입니다.")
     private Long memberId;
+
+    @NotNull(message = "필수 항목입니다.")
+    private String appKey;
+
+    @NotNull(message = "필수 항목입니다.")
+    private String appSecret;
+
+    @NotNull(message = "필수 항목입니다.")
+    private String accessToken;
+
 }

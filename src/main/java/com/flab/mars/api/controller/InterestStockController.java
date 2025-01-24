@@ -5,6 +5,7 @@ import com.flab.mars.api.dto.request.AddStockRequest;
 import com.flab.mars.api.dto.response.InterestStockDto;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.domain.service.InterestStockService;
+import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.InterestStockVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,9 @@ public class InterestStockController {
     @PostMapping
     public ResponseEntity<ResultAPIDto<Long>> registerInterestStock(@RequestBody @Valid AddStockRequest request) {
 
-        long interestStockId = interestStockService.registerInterestStock(request.getMemberId(), request.getStockCode(), request.getStockName());
+        TokenInfoVO tokenInfoVO = new TokenInfoVO(request.getAppKey(), request.getAppSecret(), request.getAccessToken());
+
+        long interestStockId = interestStockService.registerInterestStock(request.getMemberId(), request.getStockCode(), tokenInfoVO);
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", interestStockId ));
     }
