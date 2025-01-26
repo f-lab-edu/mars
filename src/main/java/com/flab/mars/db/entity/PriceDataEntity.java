@@ -27,12 +27,12 @@ public class PriceDataEntity {
     private String highPrice;    // 최고가
     private String lowPrice;     // 최저가
 
-    private String acmlVol;      // 누적 거래량 (전체 누적 거래량)
-    private String acmlTrPbmn;   // 누적 거래 대금
+    private String accumulatedVolume;      // 누적 거래량 (전체 누적 거래량)
+    private String accumulatedTradeAmount;   // 누적 거래 대금
 
-    private String prdyVrss; // 전일 대비
-    private String prdyVrssSign; // 전일 대비 부호 1 : 상한,  2 : 상승, 3 : 보합 ,4 : 하한,  5 : 하락
-    private String prdyCtrt; // 전일 대비율
+    private String priceChange; // 전일 대비
+    private String priceChangeSign; // 전일 대비 부호 1 : 상한,  2 : 상승, 3 : 보합 ,4 : 하한,  5 : 하락
+    private String priceChangeRate; // 전일 대비율
 
     private LocalDateTime dateTime; // 데이터 발생 시간 (날짜+시간)
 

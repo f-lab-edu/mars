@@ -25,8 +25,8 @@ public class PriceDataVO {
     private BigDecimal highPrice;    // 최고가
     private BigDecimal lowPrice;     // 최저가
 
-    private BigDecimal acmlVol;      // 누적 거래량 (전체 누적 거래량)
-    private BigDecimal acmlTrPbmn;   // 누적 거래 대금
+    private BigDecimal accumulatedVolume;      // 누적 거래량 (전체 누적 거래량)
+    private BigDecimal accumulatedTradeAmount;   // 누적 거래 대금
 
     private LocalDateTime dateTime;
 
@@ -40,8 +40,8 @@ public class PriceDataVO {
                 .closePrice(entity.getClosePrice() != null ? new BigDecimal(entity.getClosePrice()) : BigDecimal.ZERO)  // 실시간 가격일 경우 종가 없음
                 .highPrice(new BigDecimal(entity.getHighPrice()))
                 .lowPrice(new BigDecimal(entity.getLowPrice()))
-                .acmlVol(new BigDecimal(entity.getAcmlVol()))
-                .acmlTrPbmn(new BigDecimal(entity.getAcmlTrPbmn()))
+                .accumulatedVolume(new BigDecimal(entity.getAccumulatedVolume()))
+                .accumulatedTradeAmount(new BigDecimal(entity.getAccumulatedTradeAmount()))
                 .dateTime(entity.getDateTime())
                 .build();
     }
