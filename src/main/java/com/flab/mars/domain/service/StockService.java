@@ -29,6 +29,8 @@ public class StockService {
 
     private final StockInfoRepository stockInfoRepository;
 
+    private final StockPriceService stockPriceService;
+
 
     @Transactional
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
@@ -47,46 +49,7 @@ public class StockService {
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
-        return saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
-    }
-
-
-    /**
-     * 현재 주식 가격을 DB에 저장합니다. (분 단위로 저장됨)
-     * @param stockPrice
-     * @param stockInfoEntity
-     * @param currentTime
-     * @return
-     */
-    private PriceDataVO saveCurrentStockPrice(KisStockPriceDto stockPrice, StockInfoEntity stockInfoEntity, LocalDateTime currentTime) {
-
-        KisStockPriceDto.Output output = stockPrice.getOutput();
-        PriceDataEntity priceDataEntity = PriceDataEntity.builder()
-                .stockInfoEntity(stockInfoEntity)
-                .currentPrice(output.getStckPrpr())       // 현재가
-                .openPrice(output.getStckOprc())       // 주식 시가
-                .highPrice(output.getStckHgpr())       // 주식 최고가
-                .lowPrice(output.getStckLwpr())        // 주식 최저가
-                .acmlVol(output.getAcmlVol())          // 누적 거래량
-                .acmlTrPbmn(output.getAcmlTrPbmn())    // 누적 거래 대금
-                .prdyVrss(output.getPrdyVrss()) // 전일 대비 가격변화
-                .prdyVrssSign(mapPrdyVrssSignToSymbol(output.getPrdyVrssSign())) // 전일 대비 부호
-                .prdyCtrt(output.getPrdyCtrt()) // 전일 대비율
-                .dateTime(currentTime)
-                .build();
-        PriceDataEntity savedPriceDataEntity = priceDataRepository.save(priceDataEntity);
-
-        return PriceDataVO.toVO(savedPriceDataEntity);
-    }
-
-    public String mapPrdyVrssSignToSymbol(String prdyVrssSign) {
-        return switch (prdyVrssSign) {
-            case "1", "2" -> // 상승
-                    "+";
-            case "4", "5" ->  // 하락
-                    "-";
-            default -> ""; // 기호 없음
-        };
+        return stockPriceService.saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {

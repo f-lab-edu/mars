@@ -23,3 +23,6 @@ logging:
 kis:
   api:
     grant_type: client_credentials
+    app_key: app_key
+    app_secret: app_secret
+    access_token : access_token
