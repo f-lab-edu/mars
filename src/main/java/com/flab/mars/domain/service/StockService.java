@@ -7,12 +7,9 @@ import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
-import com.flab.mars.domain.vo.MemberInfoVO;
-import com.flab.mars.domain.vo.response.AccessTokenVO;
+import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.PriceDataVO;
 import com.flab.mars.domain.vo.response.StockFluctuationVO;
-import com.flab.mars.exception.BadWebClientRequestException;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,9 +31,7 @@ public class StockService {
 
 
     @Transactional
-    public PriceDataVO getStockPrice(String stockCode, HttpSession session) {
-        MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
-
+    public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
         // 등록된 주식만 조회가능
         StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));
 
@@ -50,7 +45,7 @@ public class StockService {
             return PriceDataVO.toVO(priceDataEntity.get());
         }
 
-        KisStockPriceDto stockPrice = kisClient.getStockPrice(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), stockCode);
+        KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
         return saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
     }
@@ -94,10 +89,8 @@ public class StockService {
         };
     }
 
-    public StockFluctuationVO getFluctuationRanking(String url, HttpSession session) {
-        MemberInfoVO sessionLoginUser = SessionUtil.getSessionLoginUser(session);
-
-        KISFluctuationResponseDto fluctuationRanking = kisClient.getFluctuationRanking(sessionLoginUser.getAccessToken(), sessionLoginUser.getAppKey(), sessionLoginUser.getAppSecret(), url);
+    public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {
+        KISFluctuationResponseDto fluctuationRanking = kisClient.getFluctuationRanking(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), url);
         return StockFluctuationVO.dtoToVO(fluctuationRanking);
 
     }
