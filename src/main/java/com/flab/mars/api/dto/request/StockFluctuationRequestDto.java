@@ -1,5 +1,6 @@
 package com.flab.mars.api.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,15 @@ public class StockFluctuationRequestDto {
     private String fidCondScrDivCode = "20170"; // Default: "20170"
 
     private String fidRsflRate2 = ""; // Default: ""
+
+    @NotNull(message = "필수 항목입니다.")
+    private String appKey;
+
+    @NotNull(message = "필수 항목입니다.")
+    private String appSecret;
+
+    @NotNull(message = "필수 항목입니다.")
+    private String accessToken;
 
 
     public String buildQueryParams() {

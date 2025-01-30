@@ -15,38 +15,38 @@ public class KisStockPriceDto {
     private String msg1;
 
     @JsonProperty("output")
-    private Output output;
+    private StockPriceDetails  stockPriceDetails;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Output {
+    public static class StockPriceDetails {
         @JsonProperty("stck_prpr")
-        private String stckPrpr; // 주식 현재가
+        private String currentPrice; // 주식 현재가
 
         @JsonProperty("prdy_vrss")
-        private String prdyVrss; // 전일 대비
+        private String priceChange; // 전일 대비
 
         @JsonProperty("prdy_vrss_sign")
-        private String prdyVrssSign; // 전일 대비 부호
+        private String priceChangeSign; // 전일 대비 부호
 
         @JsonProperty("prdy_ctrt")
-        private String prdyCtrt; // 전일 대비율
+        private String priceChangeRate; // 전일 대비율
 
         @JsonProperty("acml_tr_pbmn")
-        private String acmlTrPbmn; // 누적 거래 대금
+        private String accumulatedTradeAmount; // 누적 거래 대금
 
         @JsonProperty("acml_vol")
-        private String acmlVol; // 누적 거래량
+        private String accumulatedVolume; // 누적 거래량
 
         @JsonProperty("stck_oprc")
-        private String stckOprc; // 주식 시가
+        private String openingPrice; // 주식 시가
 
         @JsonProperty("stck_hgpr")
-        private String stckHgpr; // 주식 최고가
+        private String highPrice; // 주식 최고가
 
         @JsonProperty("stck_lwpr")
-        private String stckLwpr; // 주식 최저가
+        private String lowPrice; // 주식 최저가
     }
 
 }
