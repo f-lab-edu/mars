@@ -1,21 +1,51 @@
 package com.flab.mars.domain.service;
 
 
+import com.flab.mars.client.KISClient;
+import com.flab.mars.client.KISConfig;
 import com.flab.mars.db.entity.MemberEntity;
 import com.flab.mars.db.repository.MemberRepository;
 import com.flab.mars.domain.vo.CreateMember;
+import com.flab.mars.domain.vo.MemberInfoVO;
+import com.flab.mars.domain.vo.TokenInfo;
+import com.flab.mars.domain.vo.response.AccessTokenVO;
+import com.flab.mars.exception.BadWebClientRequestException;
+import com.flab.mars.support.SessionUtil;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final KISClient kisClient;
+
+    private final KISConfig kisConfig;
+
+
+    public AccessTokenVO getAccessToken(TokenInfo tokenInfo) {
+
+        try {
+            String accessToken = kisClient.getAccessToken(tokenInfo.getAppKey(), tokenInfo.getAppSecret(), kisConfig.getGrantType());
+            tokenInfo.setAccessToken(accessToken);
+            return new AccessTokenVO(true, "AccessToken 발급 성공", HttpStatus.OK, accessToken);
+        } catch (BadWebClientRequestException e) {
+            log.error("AccessToken 발급 실패 : {}", e.getErrorDescription());
+            return new AccessTokenVO(false, e.getErrorDescription(), e.getStatusCode(), null);
+        }
+    }
 
     /**
      * 회원 생성
@@ -60,6 +90,19 @@ public class MemberService {
     }
 
 
+    public boolean login(String email, String pw, TokenInfo tokenInfo, HttpSession session) {
 
+        Optional<MemberEntity> memberOptionl = memberRepository.findByEmail(email);
+        if(memberOptionl.isEmpty()) return false;
 
+        MemberEntity memberEntity = memberOptionl.get();
+
+        // 비밀번호 검사
+        if(!passwordEncoder.matches(pw, memberEntity.getPw())) return false;
+
+        // 로그인 처리
+        SessionUtil.setSessionValue(session, SessionUtil.ROLE, MemberInfoVO.createMemberInfoVO(memberEntity, tokenInfo));
+
+        return true;
+    }
 }
