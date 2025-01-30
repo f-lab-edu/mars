@@ -36,9 +36,7 @@ public class InterestStockService {
         // DB 에 해당 주식 코드 정보가 없는 경우
         StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
                 .orElseGet(() -> {
-                    KisStockResponseDto verifyStock = stockCodeValidator.validate(stockCode, token);
-                    // 상품약어명
-                    String stockName = verifyStock.getStockInfo().getProductAbbreviation();
+                    String stockName = stockCodeValidator.validate(stockCode, token);
                     // 해당 주식이 저장되어 있지 않은 경우 insert
                     return stockInfoRepository.save(new StockInfoEntity(stockCode, stockName));
         });

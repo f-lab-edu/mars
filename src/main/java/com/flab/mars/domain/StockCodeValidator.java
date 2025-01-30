@@ -13,7 +13,7 @@ public class StockCodeValidator {
     private final KISClient kisClient;
 
 
-    public KisStockResponseDto validate(String stockCode, TokenInfoVO token)  {
+    public String validate(String stockCode, TokenInfoVO token)  {
 
         // 주식 코드 유효성 검증
         KisStockResponseDto verifyStock = kisClient.getStockName(token.getAccessToken(), token.getAppKey(), token.getAppSecret(), stockCode);
@@ -22,9 +22,11 @@ public class StockCodeValidator {
             throw new IllegalArgumentException("유효하지 않은 주식 코드입니다 : " + stockCode + " ,  응답 메시지:  " + verifyStock.getMsg1());
         }
 
-        if (verifyStock.getStockInfo() == null) {
+        KisStockResponseDto.StockInfo stockInfo = verifyStock.getStockInfo();;
+
+        if (stockInfo == null) {
             throw new IllegalStateException(" 해당 주식 코드에 관련된 정보를 조회할 수 없습니다 : " + stockCode);
         }
-        return verifyStock;
+        return stockInfo.getProductAbbreviation();
     }
 }
