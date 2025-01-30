@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
 
     // AuthException 예외 처리 메서드
     @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ResultAPIDto<Object>> authException(AuthException e) {
+    private ResponseEntity<ResultAPIDto<Object>> authException(AuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ResultAPIDto.res(HttpStatus.UNAUTHORIZED, e.getMessage(), null));
     }
