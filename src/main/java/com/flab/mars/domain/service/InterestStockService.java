@@ -1,6 +1,5 @@
 package com.flab.mars.domain.service;
 
-import com.flab.mars.client.dto.KisStockResponseDto;
 import com.flab.mars.db.entity.InterestStockEntity;
 import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
@@ -36,7 +35,7 @@ public class InterestStockService {
         // DB 에 해당 주식 코드 정보가 없는 경우
         StockInfoEntity stockInfoEntity = stockInfoRepository.findByStockCode(stockCode)
                 .orElseGet(() -> {
-                    String stockName = stockCodeValidator.validate(stockCode, token);
+                    String stockName = stockCodeValidator.validateAndGetStockName(stockCode, token);
                     // 해당 주식이 저장되어 있지 않은 경우 insert
                     return stockInfoRepository.save(new StockInfoEntity(stockCode, stockName));
         });
