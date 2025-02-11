@@ -7,6 +7,9 @@ import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.StockInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,16 +25,29 @@ public class StockPriceSyncService {
     private final KISClient kisClient;
     private final KISConfig kisConfig;
 
+    // TODO - api 초당 호출 횟수 20회 제한 처리 필요
+    private static final int PAGE_SIZE = 20;
+
 
     public void syncStockPrices() {
-        List<StockInfoEntity> allStockInfoEntity = stockInfoRepository.findAll();
-        for (StockInfoEntity stockInfo : allStockInfoEntity) {
-            try {
-                KisStockPriceDto stockPrice = kisClient.getStockPrice(kisConfig.getAccessToken(), kisConfig.getAppKey(), kisConfig.getAppSecret(), stockInfo.getStockCode());
-                stockPriceService.saveCurrentStockPrice(stockPrice, stockInfo, LocalDateTime.now());
-            } catch (Exception e) {
-                log.error("StockPriceSyncService 동기화 중 에러 발생 for stock code: {}", stockInfo.getStockCode(), e);
+        int page = 0;
+        boolean hasMore = true;
+
+        while (hasMore) {
+            Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+            Page<StockInfoEntity> stockInfoPage = stockInfoRepository.findAll(pageable);
+            List<StockInfoEntity> stockInfoEntities  = stockInfoPage.getContent();
+            for (StockInfoEntity stockInfo : stockInfoEntities ) {
+                try {
+                    KisStockPriceDto stockPrice = kisClient.getStockPrice(kisConfig.getAccessToken(), kisConfig.getAppKey(), kisConfig.getAppSecret(), stockInfo.getStockCode());
+                    stockPriceService.saveCurrentStockPrice(stockPrice, stockInfo, LocalDateTime.now());
+                } catch (Exception e) {
+                    log.error("StockPriceSyncService 동기화 중 에러 발생 for stock code: {}", stockInfo.getStockCode(), e);
+                }
             }
+
+            hasMore = stockInfoPage.hasNext();
+            page++;
         }
-    }
+   }
 }
