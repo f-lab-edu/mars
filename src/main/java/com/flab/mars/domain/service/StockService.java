@@ -13,7 +13,6 @@ import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -32,7 +31,6 @@ public class StockService {
     private final StockPriceService stockPriceService;
 
 
-    @Transactional
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
         // 등록된 주식만 조회가능
         StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));

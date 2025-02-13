@@ -10,7 +10,12 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Entity
-@Table(name = "price_data")
+@Table(
+        name = "price_data",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_stock_info_datetime", columnNames = {"stock_info_id", "date_time"})
+        }
+)
 @ToString
 public class PriceDataEntity {
     @Id
@@ -18,10 +23,10 @@ public class PriceDataEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_info_id")
+    @JoinColumn(name = "stock_info_id", nullable = false)
     private StockInfoEntity stockInfoEntity;
 
-    private String currentPrice; // 현재가 (데이터 유형이 실기간인 경우 사용)
+    private String currentPrice; // 현재가
     private String openPrice;    // 시가
     private String closePrice;   // 종가
     private String highPrice;    // 최고가

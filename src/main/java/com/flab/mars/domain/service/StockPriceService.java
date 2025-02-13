@@ -7,6 +7,7 @@ import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.domain.vo.response.PriceDataVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,9 +44,17 @@ public class StockPriceService {
                 .priceChangeRate(stockDetails.getPriceChangeRate()) // 전일 대비율
                 .dateTime(currentTime)                              // 현재 시간
                 .build();
-        PriceDataEntity savedPriceDataEntity = priceDataRepository.save(priceDataEntity);
 
-        return PriceDataVO.toVO(savedPriceDataEntity);
+        try {
+            PriceDataEntity savedPriceDataEntity = priceDataRepository.save(priceDataEntity);
+            return PriceDataVO.toVO(savedPriceDataEntity);
+        } catch (DataIntegrityViolationException e) {
+            // 이미 존재하는 데이터라면기존 데이터 조회 후 반환
+            return priceDataRepository.findByStockInfoEntityAndDateTime(stockInfoEntity, currentTime)
+                    .map(PriceDataVO::toVO)
+                    .orElseThrow(()-> new IllegalStateException("데이터 조회 중 오류 발생"));
+        }
+
     }
 
 
