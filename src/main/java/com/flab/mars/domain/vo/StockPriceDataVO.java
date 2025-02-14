@@ -1,4 +1,4 @@
-package com.flab.mars.domain.service;
+package com.flab.mars.domain.vo;
 
 import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.db.entity.PriceDataEntity;
@@ -8,14 +8,14 @@ import com.flab.mars.domain.vo.response.PriceDataVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class StockPriceService {
+public class StockPriceDataVO {
 
     private final PriceDataRepository priceDataRepository;
 

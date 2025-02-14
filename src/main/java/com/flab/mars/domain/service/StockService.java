@@ -7,6 +7,7 @@ import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.PriceDataRepository;
 import com.flab.mars.db.repository.StockInfoRepository;
+import com.flab.mars.domain.vo.StockPriceDataVO;
 import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.PriceDataVO;
 import com.flab.mars.domain.vo.response.StockFluctuationVO;
@@ -28,7 +29,7 @@ public class StockService {
 
     private final StockInfoRepository stockInfoRepository;
 
-    private final StockPriceService stockPriceService;
+    private final StockPriceDataVO stockPriceDataVO;
 
 
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
@@ -47,7 +48,7 @@ public class StockService {
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
-        return stockPriceService.saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
+        return stockPriceDataVO.saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {

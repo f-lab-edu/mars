@@ -5,6 +5,7 @@ import com.flab.mars.client.KISConfig;
 import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.db.entity.StockInfoEntity;
 import com.flab.mars.db.repository.StockInfoRepository;
+import com.flab.mars.domain.vo.StockPriceDataVO;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
 public class StockPriceSyncService {
 
     private final StockInfoRepository stockInfoRepository;
-    private final StockPriceService stockPriceService;
+    private final StockPriceDataVO stockPriceDataVO;
     private final KISClient kisClient;
     private final KISConfig kisConfig;
 
@@ -38,7 +39,7 @@ public class StockPriceSyncService {
         executor.submit(() -> {
             try {
                 KisStockPriceDto stockPrice = kisClient.getStockPrice(kisConfig.getAccessToken(), kisConfig.getAppKey(), kisConfig.getAppSecret(), stockInfo.getStockCode());
-                stockPriceService.saveCurrentStockPrice(stockPrice, stockInfo, LocalDateTime.now());
+                stockPriceDataVO.saveCurrentStockPrice(stockPrice, stockInfo, LocalDateTime.now());
             } catch (Exception e) {
                 log.error("StockPriceSyncService 동기화 중 에러 발생 for stock code: {}", stockInfo.getStockCode(), e);
             }
@@ -61,11 +62,11 @@ public class StockPriceSyncService {
         }
    }
 
-   // 서비스 종료시 ExecutorService 를 종료하는 메서드
-   @PreDestroy
-   public void shutdownExecutorService() {
+    // 서비스 종료시 ExecutorService 를 종료하는 메서드
+    @PreDestroy
+    public void shutdownExecutorService() {
         if(!executor.isShutdown()) {
             executor.shutdown();
         }
-   }
+    }
 }
