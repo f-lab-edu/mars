@@ -1,4 +1,4 @@
-package com.flab.mars.domain.vo;
+package com.flab.mars.domain.service;
 
 import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.db.entity.PriceDataEntity;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class StockPriceDataVO {
+public class StockPriceManager  {
 
     private final PriceDataRepository priceDataRepository;
 

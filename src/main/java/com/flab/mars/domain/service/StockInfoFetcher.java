@@ -1,4 +1,4 @@
-package com.flab.mars.domain.vo;
+package com.flab.mars.domain.service;
 
 
 import com.flab.mars.db.entity.StockInfoEntity;
