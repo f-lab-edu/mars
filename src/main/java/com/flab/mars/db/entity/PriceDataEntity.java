@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @ToString
 public class PriceDataEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
