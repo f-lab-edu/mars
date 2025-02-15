@@ -8,5 +8,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PriceDataRepository extends JpaRepository<PriceDataEntity, Long> {
+
     Optional<PriceDataEntity> findByStockInfoEntityAndDateTime(StockInfoEntity stockInfoEntity, LocalDateTime dateTime);
+
+    Optional<PriceDataEntity> findTopByStockInfoEntityIdAndDateTimeAfterOrderByDateTimeDesc(Long stockInfoEntityId, LocalDateTime dateTimeAfter);
+
 }

@@ -5,7 +5,6 @@ import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @Getter
 @Entity
 @Table(name = "stock_info")
@@ -15,7 +14,14 @@ public class StockInfoEntity {
     @Column(name = "stock_info_id")
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String stockCode; // 주식 코드
+
+    @Column(nullable = false)
     private String stockName; // 주식 이름
 
+    public StockInfoEntity(String stockCode, String stockName) {
+        this.stockCode = stockCode;
+        this.stockName = stockName;
+    }
 }
