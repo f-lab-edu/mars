@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
-class StockPriceManagerTest {
+class StockPriceSaverTest {
 
     @InjectMocks
     private StockPriceSaver stockPriceSaver;
