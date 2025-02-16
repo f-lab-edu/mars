@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import static com.flab.mars.client.KISApiUrls.INQUIRE_PRICE;
 import static com.flab.mars.client.KISApiUrls.SEARCH_INFO;
 
+@Slf4j
 @Component
 @Slf4j
 @RequiredArgsConstructor
