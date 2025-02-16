@@ -53,8 +53,8 @@ public class InterestStockController {
                         stock.getStockName(),
                         stock.getStockCode(),
                         stock.getCurrentPrice(),
-                        stock.getPrdyVrss(), // 전일 대비
-                        stock.getPrdyCtrt() // 전일 대비률
+                        stock.getPriceChange(), // 전일 대비
+                        stock.getPriceChangeRate() // 전일 대비률
                 ))
                 .toList();
 

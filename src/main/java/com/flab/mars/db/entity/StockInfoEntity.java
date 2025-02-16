@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Entity
+@Builder
 @Table(name = "stock_info")
 public class StockInfoEntity {
     @Id

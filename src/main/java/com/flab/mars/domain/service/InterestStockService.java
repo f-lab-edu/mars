@@ -74,10 +74,9 @@ public class InterestStockService {
                     .stockCode(stockInfo.getStockCode())
                     .stockName(stockInfo.getStockName())
                     .currentPrice(latestPriceData != null ? latestPriceData.getCurrentPrice() : "0")
-                    .prdyCtrt(latestPriceData != null ? latestPriceData.getPrdyCtrt() : "0")
-                    .prdyVrssSign(latestPriceData != null ? latestPriceData.getPrdyVrssSign() : "")
-                    .prdyVrss(latestPriceData != null ? latestPriceData.getPrdyVrss() : "")
-                    .prdyCtrt(latestPriceData != null ? latestPriceData.getPrdyCtrt() : "0")
+                    .priceChangeSign(latestPriceData != null ? latestPriceData.getPriceChangeSign() : "")
+                    .priceChange(latestPriceData != null ? latestPriceData.getPriceChange() : "")
+                    .priceChangeRate(latestPriceData != null ? latestPriceData.getPriceChangeRate() : "0")
                     .build();
 
             interestStockVOs.add(interestStockVO);
