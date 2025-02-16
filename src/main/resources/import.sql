@@ -24,7 +24,6 @@ INSERT INTO stock_info (stock_code, stock_name) VALUES ('035250', 'CJ ENM');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('000810', 'SK네트웍스');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('086280', '한온시스템');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('012750', '현대모비스');
-INSERT INTO stock_info (stock_code, stock_name) VALUES ('035720', '카카오');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('021240', '대우건설');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('086980', '대림산업');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('009150', '삼성전기');
@@ -39,13 +38,13 @@ INSERT INTO stock_info (stock_code, stock_name) VALUES ('047050', '현대글로�
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('020000', '쌍용차');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('009830', '하나금융지주');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('096770', '삼성SDI');
-INSERT INTO stock_info (stock_code, stock_name) VALUES ('032640', 'KB금융');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('004170', '아모레퍼시픽');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('003670', 'LG생활건강');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('010130', '이마트');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('003000', 'CJ제일제당');
-INSERT INTO stock_info (stock_code, stock_name) VALUES ('000810', 'SK네트웍스');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('041190', '삼성증권');
 INSERT INTO stock_info (stock_code, stock_name) VALUES ('033180', '한국항공우주');
-INSERT INTO stock_info (stock_code, stock_name) VALUES ('010130', '이마트');
-INSERT INTO stock_info (stock_code, stock_name) VALUES ('005490', 'POSCO');
+
+
+-- Member 테이블에 데이터 삽입
+INSERT INTO member (name, email, status, last_access_time, join_time) VALUES ('홍길동', 'hong@example.com', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
