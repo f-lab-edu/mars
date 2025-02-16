@@ -6,6 +6,7 @@ import com.flab.mars.client.dto.KisStockResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 import static com.flab.mars.client.KISApiUrls.INQUIRE_PRICE;
 import static com.flab.mars.client.KISApiUrls.SEARCH_INFO;
 
+@Slf4j
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +37,12 @@ public class KISClient {
                     headers.setContentType(MediaType.APPLICATION_JSON);
                 })
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, response ->
+                        response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error("Error response body: {}", errorBody);
+                                    return Mono.error(new RuntimeException(errorBody));
+                                }))
                 .bodyToMono(KisStockPriceDto.class)
                 .block();
     }

@@ -1,17 +1,13 @@
 package com.flab.mars.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flab.mars.client.KISClient;
-import com.flab.mars.client.KISConfig;
 import com.flab.mars.domain.service.StockService;
+import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.PriceDataVO;
 import com.flab.mars.domain.vo.response.StockFluctuationVO;
-import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,41 +29,41 @@ class StockControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockitoBean
     private StockService stockService;
 
-    @MockitoBean
-    private KISClient kisClient;
-
-    @MockitoBean
-    private KISConfig kisConfig;
 
     @Test
     void testGetStockPrice_Success() throws Exception {
         // Arrange
         String stockCode = "12345";
-        PriceDataVO stockPrice = new PriceDataVO();
+        String appKey = "testAppKey";
+        String appSecret = "testAppSecret";
+        String accessToken = "testAccessToken";
 
         // Mock stockService.getStockPrice() 메서드
-        when(stockService.getStockPrice(eq(stockCode), any(HttpSession.class))).thenReturn(stockPrice);
+        when(stockService.getStockPrice(eq(stockCode), any(TokenInfoVO.class))).thenReturn(new PriceDataVO());
 
         // Act & Assert
         mockMvc.perform(get("/api/stock/quotations/inquire-price")
                         .param("stockCode", stockCode)
-                        .sessionAttr("mockSession", new MockHttpSession())
+                        .param("appKey", appKey)
+                        .param("appSecret", appSecret)
+                        .param("accessToken", accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultMsg").value("Success"));
 
-        verify(stockService, times(1)).getStockPrice(eq(stockCode), any(HttpSession.class));
+        verify(stockService, times(1)).getStockPrice(eq(stockCode), any(TokenInfoVO.class));
     }
 
     @Test
     void testGetFluctuationRanking_Success() throws Exception {
         // Given
+        String appKey = "testAppKey";
+        String appSecret = "testAppSecret";
+        String accessToken = "testAccessToken";
+
         List<StockFluctuationVO.StockFluctuationItemVO> stockFluctuations = new ArrayList<>();
         stockFluctuations.add(new StockFluctuationVO.StockFluctuationItemVO(
                 "AAPL", "1", "Apple Inc.", "145.00", "1.50", "+", "1.04"));
@@ -84,7 +80,9 @@ class StockControllerTest {
                         .param("fidInputPrice1", "")
                         .param("fidInputPrice2", "")
                         .param("fidVolCnt", "")
-                        .sessionAttr("mockSession", new MockHttpSession())
+                        .param("appKey", appKey)
+                        .param("appSecret", appSecret)
+                        .param("accessToken", accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(result -> System.out.println("Response: " + result.getResponse().getContentAsString())) // 응답 로깅
                 .andExpect(status().isOk())

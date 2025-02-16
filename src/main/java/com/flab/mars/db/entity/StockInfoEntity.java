@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name = "stock_info")
 public class StockInfoEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stock_info_id")
     private Long id;
 
