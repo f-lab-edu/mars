@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class StockPriceManagerTest {
 
     @InjectMocks
-    private StockPriceManager stockPriceManager;
+    private StockPriceSaver stockPriceSaver;
     @Mock
     private PriceDataRepository priceDataRepository;
     private StockInfoEntity stockInfoEntity;
@@ -72,7 +72,7 @@ class StockPriceManagerTest {
         when(priceDataRepository.save(any(PriceDataEntity.class))).thenReturn(priceDataEntity);
 
         // when
-        PriceDataVO priceDataVO = stockPriceManager.saveCurrentStockPrice(kisStockPriceDto, stockInfoEntity, currentTime);
+        PriceDataVO priceDataVO = stockPriceSaver.storeStockPriceWithoutDuplication(kisStockPriceDto, stockInfoEntity, currentTime);
 
         //then
         assertNotNull(priceDataVO);

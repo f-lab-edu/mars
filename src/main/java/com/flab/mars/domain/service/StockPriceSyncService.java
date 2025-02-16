@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 public class StockPriceSyncService {
 
     private final StockInfoFetcher stockInfoFetcher;
-    private final StockPriceManager stockPriceManager;
+    private final StockPriceSaver stockPriceSaver;
     private final KISClient kisClient;
     private final KISConfig kisConfig;
 
@@ -29,7 +29,7 @@ public class StockPriceSyncService {
         executor.submit(() -> {
             try {
                 KisStockPriceDto stockPrice = kisClient.getStockPrice(kisConfig.getAccessToken(), kisConfig.getAppKey(), kisConfig.getAppSecret(), stockInfo.getStockCode());
-                stockPriceManager.saveCurrentStockPrice(stockPrice, stockInfo, LocalDateTime.now());
+                stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, LocalDateTime.now());
             } catch (Exception e) {
                 log.error("StockPriceSyncService 동기화 중 에러 발생 for stock code: {}", stockInfo.getStockCode(), e);
             }

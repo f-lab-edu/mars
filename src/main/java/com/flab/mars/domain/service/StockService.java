@@ -28,7 +28,7 @@ public class StockService {
 
     private final StockInfoRepository stockInfoRepository;
 
-    private final StockPriceManager stockPriceManager;
+    private final StockPriceSaver stockPriceSaver;
 
 
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
@@ -47,7 +47,7 @@ public class StockService {
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
-        return stockPriceManager.saveCurrentStockPrice(stockPrice, stockInfo, currentTime);
+        return stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, currentTime);
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class StockPriceManager  {
+public class StockPriceSaver  {
 
     private final PriceDataRepository priceDataRepository;
 
@@ -26,7 +26,7 @@ public class StockPriceManager  {
      * @param currentTime 현재 시간
      * @return 주식 가격 VO 객체
      */
-    public PriceDataVO saveCurrentStockPrice(KisStockPriceDto stockPriceDto, StockInfoEntity stockInfoEntity, LocalDateTime currentTime) {
+    public PriceDataVO storeStockPriceWithoutDuplication(KisStockPriceDto stockPriceDto, StockInfoEntity stockInfoEntity, LocalDateTime currentTime) {
 
         KisStockPriceDto.StockPriceDetails stockDetails = stockPriceDto.getStockPriceDetails();
 
