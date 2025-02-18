@@ -31,6 +31,9 @@ dependencies {
  	implementation 'com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0' // 쿼리디버그
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' // LocalDateTime 직렬화 기능 추가
+
 
 
 	compileOnly 'org.projectlombok:lombok'

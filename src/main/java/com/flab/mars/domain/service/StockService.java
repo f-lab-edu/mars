@@ -12,6 +12,7 @@ import com.flab.mars.domain.vo.response.PriceDataVO;
 import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,13 +31,13 @@ public class StockService {
 
     private final StockPriceSaver stockPriceSaver;
 
-
-    public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
+    @Cacheable(
+            cacheNames = "getStockPrice",
+            key = "'stock:' + #stockCode + 'time:' + #currentTime", cacheManager = "stockPriceCacheManager"
+    )
+    public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo, LocalDateTime currentTime) {
         // 등록된 주식만 조회가능
         StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));
-
-        // 현재 시간을 분 단위로 얻기
-        LocalDateTime currentTime = LocalDateTime.now().withSecond(0).withNano(0); // 초 단위 제거
 
         Optional<PriceDataEntity> priceDataEntity = priceDataRepository.findByStockInfoEntityAndDateTime(stockInfo, currentTime);
 
