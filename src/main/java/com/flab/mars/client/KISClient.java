@@ -16,7 +16,6 @@ import static com.flab.mars.client.KISApiUrls.SEARCH_INFO;
 
 @Slf4j
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class KISClient {
 
