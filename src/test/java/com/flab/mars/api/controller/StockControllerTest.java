@@ -12,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ class StockControllerTest {
         String accessToken = "testAccessToken";
 
         // Mock stockService.getStockPrice() 메서드
-        when(stockService.getStockPrice(eq(stockCode), any(TokenInfoVO.class))).thenReturn(new PriceDataVO());
+        when(stockService.getStockPrice(eq(stockCode), any(TokenInfoVO.class), any(LocalDateTime.class))).thenReturn(new PriceDataVO());
 
         // Act & Assert
         mockMvc.perform(get("/api/stock/quotations/inquire-price")
@@ -54,7 +55,7 @@ class StockControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultMsg").value("Success"));
 
-        verify(stockService, times(1)).getStockPrice(eq(stockCode), any(TokenInfoVO.class));
+        verify(stockService, times(1)).getStockPrice(eq(stockCode), any(TokenInfoVO.class), any(LocalDateTime.class));
     }
 
     @Test
