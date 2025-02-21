@@ -32,8 +32,8 @@ public class StockService {
     private final StockPriceSaver stockPriceSaver;
 
     @Cacheable(
-            cacheNames = "getStockPrice",
-            key = "'stock:' + #stockCode + 'time:' + #currentTime", cacheManager = "stockPriceCacheManager"
+            value  = "getStockPrice",
+            key = "'stock:' + #stockCode + 'time:' + #currentTime"
     )
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo, LocalDateTime currentTime) {
         // 등록된 주식만 조회가능

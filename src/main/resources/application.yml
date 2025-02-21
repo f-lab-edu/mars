@@ -9,15 +9,11 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create # 테이블 drop 후 자동 생성
+      ddl-auto: none # 테이블 drop 후 자동 생성
     properties:
       hibernate:
         #         show_sql: true # 시스템 아웃으로 sql 출력
         format_sql: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 
 
