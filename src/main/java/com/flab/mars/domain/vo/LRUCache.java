@@ -12,7 +12,7 @@ public class LRUCache {
     private int capacity;
     private int DEFAULT_CAPACITY  = 10;
 
-    private final Map<String, String> map = new HashMap<>(); // LinkedList 를 경우 키의 검색의 경우 O(n) 를 보완하기 위해서 map 생성-> 키의 유무 판단 O(1)
+    private final Map<String, Object> map = new HashMap<>(); // LinkedList 를 경우 키의 검색의 경우 O(n) 를 보완하기 위해서 map 생성-> 키의 유무 판단 O(1)
 
     private final LinkedList<String> order = new LinkedList<>(); // 키의 삽입 삭제 O(1)
 
@@ -31,7 +31,7 @@ public class LRUCache {
         return new LRUCache(capacity);
     }
 
-    public void add(String key, String value) {
+    public void add(String key, Object value) {
         if(map.containsKey(key)) { // cache hit
             order.remove(key); // 데이터 순서 앞으로 이동
         } else { // cache miss
@@ -44,7 +44,7 @@ public class LRUCache {
         order.add(0, key);
     }
 
-    public String getIfPresent(String key) {
+    public Object getIfPresent(String key) {
         if(map.containsKey(key)) {
             return map.get(key);
         }

@@ -1,10 +1,7 @@
 package com.flab.mars.domain.vo.response;
 
 import com.flab.mars.db.entity.PriceDataEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
+@ToString
 public class PriceDataVO {
 
     private Long id;

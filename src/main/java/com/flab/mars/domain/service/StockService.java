@@ -12,7 +12,6 @@ import com.flab.mars.domain.vo.response.PriceDataVO;
 import com.flab.mars.domain.vo.response.StockFluctuationVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,11 +30,14 @@ public class StockService {
 
     private final StockPriceSaver stockPriceSaver;
 
-    @Cacheable(
-            value  = "getStockPrice",
-            key = "'stock:' + #stockCode + 'time:' + #currentTime"
-    )
+    private final StockPriceLRUCacheSaver stockPriceLRUCacheSaver;
+
     public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo, LocalDateTime currentTime) {
+        PriceDataVO value = stockPriceLRUCacheSaver.getIfPresent(stockCode, currentTime);
+        if( value != null) {
+            // 캐싱된 값 반환
+            return value;
+        }
         // 등록된 주식만 조회가능
         StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));
 
@@ -43,12 +45,18 @@ public class StockService {
 
         if(priceDataEntity.isPresent()) {
             // DB 에 값이 있는 경우
-            return PriceDataVO.toVO(priceDataEntity.get());
+            PriceDataVO vo = PriceDataVO.toVO(priceDataEntity.get());
+            // 캐싱 처리
+            stockPriceLRUCacheSaver.save(stockCode, currentTime, vo);
+            return vo;
         }
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
-        return stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, currentTime);
+        PriceDataVO priceDataVO = stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, currentTime);
+        // 캐싱 처리
+        stockPriceLRUCacheSaver.save(stockCode, currentTime, priceDataVO);
+        return priceDataVO;
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {
