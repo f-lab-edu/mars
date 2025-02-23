@@ -9,8 +9,8 @@ import java.util.Map;
 // capacity 를 초과할 시 가장 오랫동안 사용되지 않은 데이터 삭제
 @Component
 public class LRUCache {
-    private int capacity;
-    private int DEFAULT_CAPACITY  = 10;
+    private final int capacity;
+    private final int DEFAULT_CAPACITY  = 10;
 
     private final Map<String, Object> map = new HashMap<>(); // LinkedList 를 경우 키의 검색의 경우 O(n) 를 보완하기 위해서 map 생성-> 키의 유무 판단 O(1)
 
