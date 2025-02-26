@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +34,9 @@ public class StockController {
                                                                      @RequestParam(name = "accessToken") String accessToken) {
 
         TokenInfoVO tokenInfo = new TokenInfoVO(appKey, appSecret, accessToken);
-        PriceDataVO stockPrice = stockService.getStockPrice(stockCode, tokenInfo);
+        // 분단위 조회
+        LocalDateTime currentTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        PriceDataVO stockPrice = stockService.getStockPrice(stockCode, tokenInfo, currentTime);
         StockPriceDto stockPriceDto = StockPriceDto.from(stockPrice);
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "Success", stockPriceDto));
     }

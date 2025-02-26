@@ -1,6 +1,7 @@
 package com.flab.mars.client.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true) // 알수 없는 필드 무시
 public class KisStockPriceDto {
     @JsonProperty("rt_cd")
     private String rtCd;
@@ -20,6 +22,7 @@ public class KisStockPriceDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StockPriceDetails {
         @JsonProperty("stck_prpr")
         private String currentPrice; // 주식 현재가

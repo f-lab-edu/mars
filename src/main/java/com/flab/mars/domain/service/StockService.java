@@ -30,24 +30,33 @@ public class StockService {
 
     private final StockPriceSaver stockPriceSaver;
 
+    private final StockPriceLRUCacheSaver stockPriceLRUCacheSaver;
 
-    public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo) {
+    public PriceDataVO getStockPrice(String stockCode, TokenInfoVO tokenInfo, LocalDateTime currentTime) {
+        PriceDataVO value = stockPriceLRUCacheSaver.getIfPresent(stockCode, currentTime);
+        if( value != null) {
+            // 캐싱된 값 반환
+            return value;
+        }
         // 등록된 주식만 조회가능
         StockInfoEntity stockInfo = stockInfoRepository.findByStockCode(stockCode).orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 주식 코드입니다 : " + stockCode));
-
-        // 현재 시간을 분 단위로 얻기
-        LocalDateTime currentTime = LocalDateTime.now().withSecond(0).withNano(0); // 초 단위 제거
 
         Optional<PriceDataEntity> priceDataEntity = priceDataRepository.findByStockInfoEntityAndDateTime(stockInfo, currentTime);
 
         if(priceDataEntity.isPresent()) {
             // DB 에 값이 있는 경우
-            return PriceDataVO.toVO(priceDataEntity.get());
+            PriceDataVO vo = PriceDataVO.toVO(priceDataEntity.get());
+            // 캐싱 처리
+            stockPriceLRUCacheSaver.save(stockCode, currentTime, vo);
+            return vo;
         }
 
         KisStockPriceDto stockPrice = kisClient.getStockPrice(tokenInfo.getAccessToken(), tokenInfo.getAppKey(), tokenInfo.getAppSecret(), stockCode);
 
-        return stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, currentTime);
+        PriceDataVO priceDataVO = stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, currentTime);
+        // 캐싱 처리
+        stockPriceLRUCacheSaver.save(stockCode, currentTime, priceDataVO);
+        return priceDataVO;
     }
 
     public StockFluctuationVO getFluctuationRanking(String url, TokenInfoVO tokenInfo) {

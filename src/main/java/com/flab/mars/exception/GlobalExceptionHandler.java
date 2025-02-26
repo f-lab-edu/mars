@@ -1,12 +1,14 @@
 package com.flab.mars.exception;
 
 import com.flab.mars.api.dto.response.ResultAPIDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
+@Slf4j // Lombok 의 @Slf4j 어노테이션을 사용하여 로그  객체 자동 생성
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -18,9 +20,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(WebClientRequestException.class)
-    private ResponseEntity<ResultAPIDto<String>> connectTimeoutException1(WebClientRequestException e) {
+    private ResponseEntity<ResultAPIDto<String>> connectTimeoutException(WebClientRequestException e) {
         String errorMessage = e.getMessage() != null ? e.getMessage() : "Unexpected error occurred.";
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(ResultAPIDto.res(HttpStatus.SERVICE_UNAVAILABLE, errorMessage, "연결 중 에러가 발생하였습니다."));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<ResultAPIDto<Object>> runtimeException(RuntimeException e) {
+
+        log.error("Unexpected runtime exception occurred", e);
+        String errorMessage = e.getMessage() != null ? e.getMessage() : "Unexpected runtime error occurred.";
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ResultAPIDto.res(HttpStatus.SERVICE_UNAVAILABLE, errorMessage, "서버에서 예기치 않은 오류가 발생하였습니다."));
+
+
     }
 }

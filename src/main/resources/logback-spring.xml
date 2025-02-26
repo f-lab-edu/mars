@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 콘솔 출력 설정 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Hibernate SQL 로그 -->
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+    <!-- datasource-proxy 로그 설정 -->
+    <logger name="net.ttddyy.dsproxy.listener" level="DEBUG"/>
+    <logger name="net.ttddyy.dsproxy.listener.QueryLoggingListener" level="DEBUG"/>
+    <logger name="net.ttddyy.dsproxy.listener.SLF4JQueryLoggingListener" level="DEBUG"/>
+
+    <!-- 최종 로그 레벨 설정 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
