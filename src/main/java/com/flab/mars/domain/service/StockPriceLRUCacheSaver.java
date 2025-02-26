@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Component
 public class StockPriceLRUCacheSaver {
 
-    private final LRUCache lruCache = LRUCache.createWithDefaultCapacity();
+    private final LRUCache<Object> lruCache = LRUCache.createWithDefaultCapacity();
     private static final String KEY_FORMAT = "stock::%s::time::%s";
 
     private String generateKey(String stockCode, LocalDateTime localDate) {
