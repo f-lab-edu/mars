@@ -10,7 +10,7 @@ class LRUCacheTest {
     private LRUCache lruCache;
 
     @BeforeEach
-    private void setup() {
+    void setup() {
         lruCache = LRUCache.createWithCapacity(3);
     }
 

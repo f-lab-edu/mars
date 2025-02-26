@@ -36,16 +36,18 @@ public class LRUCache {
             order.remove(key); // 데이터 순서 앞으로 이동
         } else { // cache miss
             if (capacity == order.size()) {
-                String remove = order.remove(order.size() - 1);// 가장 오랫동안 사용되지않은 데이터 삭제
-                map.remove(remove);
+                String removedKey = order.removeLast();// 가장 오랫동안 사용되지않은 데이터 삭제
+                map.remove(removedKey);
             }
         }
         map.put(key, value);
-        order.add(0, key);
+        order.addFirst(key);
     }
 
     public Object getIfPresent(String key) {
         if(map.containsKey(key)) {
+            order.remove(key);
+            order.addFirst(key);
             return map.get(key);
         }
         return null;
