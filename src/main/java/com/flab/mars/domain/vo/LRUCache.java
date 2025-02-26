@@ -28,6 +28,9 @@ public class LRUCache {
     }
 
     public static LRUCache createWithCapacity(int capacity) {
+        if(capacity <= 0) {
+            throw new IllegalArgumentException("capacity must be greater than 0");
+        }
         return new LRUCache(capacity);
     }
 
