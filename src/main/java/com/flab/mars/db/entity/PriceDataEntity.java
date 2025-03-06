@@ -37,7 +37,7 @@ public class PriceDataEntity {
 
     private String priceChange; // 전일 대비
     private String priceChangeSign; // 전일 대비 부호 1 : 상한,  2 : 상승, 3 : 보합 ,4 : 하한,  5 : 하락
-    private String priceChangeRate; // 전일 대비율
+    private Double  priceChangeRate; // 전일 대비율
 
     private LocalDateTime dateTime; // 데이터 발생 시간 (날짜+시간)
 

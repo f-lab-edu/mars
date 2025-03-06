@@ -34,7 +34,7 @@ public class KisStockPriceDto {
         private String priceChangeSign; // 전일 대비 부호
 
         @JsonProperty("prdy_ctrt")
-        private String priceChangeRate; // 전일 대비율
+        private Double priceChangeRate; // 전일 대비율
 
         @JsonProperty("acml_tr_pbmn")
         private String accumulatedTradeAmount; // 누적 거래 대금
