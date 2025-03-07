@@ -12,4 +12,5 @@ public interface InterestStockRepository extends JpaRepository<InterestStockEnti
 
     List<InterestStockEntity> findByMemberId(Long memberId);
 
+    List<InterestStockEntity> findByStockInfoId(Long stockInfoId);
 }
