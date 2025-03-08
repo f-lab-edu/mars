@@ -33,6 +33,8 @@ public class MemberEntity {
 
     private LocalDateTime joinTime;
 
+    @Column(name = "fcm_token")
+    private String FCMToken;
 
 
     public MemberEntity(String name, String email, String pw ) {
@@ -45,6 +47,13 @@ public class MemberEntity {
     public MemberEntity updateMember(String name, String pw, PasswordEncoder passwordEncoder ){
         if(StringUtils.hasText(name)) this.name = name;
         if(StringUtils.hasText(pw)) this.pw = passwordEncoder.encode(pw);
+        return this;
+    }
+
+    public MemberEntity upsertFCMToken(String fcmToken) {
+        if (StringUtils.hasText(fcmToken)) {
+            this.FCMToken = fcmToken; // FCM 토큰을 신규로 설정하거나 기존 값을 갱신
+        }
         return this;
     }
 }

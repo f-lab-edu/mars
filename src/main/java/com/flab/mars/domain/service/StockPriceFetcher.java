@@ -1,5 +1,6 @@
 package com.flab.mars.domain.service;
 
+import com.flab.mars.db.entity.PriceDataEntity;
 import com.flab.mars.db.repository.PriceDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,5 +29,11 @@ public class StockPriceFetcher {
                 })
                 .takeWhile(stockIds -> stockIds != null && !stockIds.isEmpty())// 데이터가 비어있지 않으면 계속 반복, 비면 종료
                 .flatMap(List::stream);
+    }
+
+    public Double getLatestPriceChageRateForStock(Long stockId) {
+        return priceDataRepository.findTopByStockInfoEntityIdOrderByDateTimeDesc(stockId)
+                .map(PriceDataEntity::getPriceChangeRate)
+                .orElse(null);
     }
 }

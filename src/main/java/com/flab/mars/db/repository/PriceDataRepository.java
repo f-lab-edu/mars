@@ -20,5 +20,7 @@ public interface PriceDataRepository extends JpaRepository<PriceDataEntity, Long
     @Query("select distinct p.stockInfoEntity.id from PriceDataEntity p where p.priceChangeRate >= :priceChangeRate")
     Page<Long> findDistinctStockInfoIdsByPriceChangeRateGreaterThanEqual(Double priceChangeRate, Pageable pageable);
 
+    Optional<PriceDataEntity> findTopByStockInfoEntityIdOrderByDateTimeDesc(Long stockInfoEntityId);
+
 
 }
