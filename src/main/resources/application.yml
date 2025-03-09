@@ -27,9 +27,9 @@ logging:
 kis:
   api:
     grant_type: client_credentials
-    app_key: PSvmItgnWGaKewHlPjtS37dBrne7NXFWPfVF
-    app_secret: YaLtdbOxGxzrztwLGbPoXo/c+X892jML3ucRYDELTQ/MbQRXbS2qcyjh6rhyCKSlh9NQ3bBXGXQEZE3nMivPsFe8lLgDqAlmfuHQlYnbB9F3l1GoeLMG/C/sy4vzfd8OxUXf+u2CAG/UOaJEcH7TtQ8xSZ6tE6St4uM4Oon2ooFm6so0epc=
-    access_token : eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0b2tlbiIsImF1ZCI6IjU2N2Y4NDZmLTE1YTgtNDdmNy1iOWIyLWExY2Q3YTNlMTY3YyIsInByZHRfY2QiOiIiLCJpc3MiOiJ1bm9ndyIsImV4cCI6MTc0MTQxNTMxNSwiaWF0IjoxNzQxMzI4OTE1LCJqdGkiOiJQU3ZtSXRnbldHYUtld0hsUGp0UzM3ZEJybmU3TlhGV1BmVkYifQ.O5Q4481YyHv5NlAr45V7CQ7bNdm3IO5hx7YEw7UMWNmbOsQNbGGSeZOE5DXLlJRel7ZrUBtHS91P_C9yE_PRYA
+    app_key: app_key
+    app_secret: app_secret
+    access_token : access_token
 
 firebase:
   credentials:
