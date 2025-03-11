@@ -48,12 +48,12 @@ public class StockPriceNotificationService {
             interestStockEntities.forEach(interestStock -> {
                 // 해당 정보를 기반으로 memberid 에게 문자 보내기
                 Long memberId = interestStock.getMemberId();
-                memberRepository.findById(memberId).ifPresent(member -> SendNotification(stockId, interestStock, member));
+                memberRepository.findById(memberId).ifPresent(member -> sendNotification(stockId, interestStock, member));
             });
         });
     }
 
-    private void SendNotification(Long stockId, InterestStockEntity interestStock, MemberEntity member) {
+    private void sendNotification(Long stockId, InterestStockEntity interestStock, MemberEntity member) {
         String fcmToken = member.getFCMToken();
         if (!StringUtils.hasText(fcmToken)) {
             log.info("memberId : {} , fcm token is creating : {}", member.getId(), fcmToken);
