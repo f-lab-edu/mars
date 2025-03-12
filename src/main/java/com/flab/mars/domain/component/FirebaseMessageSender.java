@@ -13,7 +13,7 @@ public class FirebaseMessageSender {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public Message makeMessage(String targetToken, String title, String body) {
+    private Message makeMessage(String targetToken, String title, String body) {
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
