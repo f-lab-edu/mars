@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -36,7 +35,6 @@ public class StockPriceNotificationService {
     @Value("${notification.stock.message}")
     private String messageTemplate;
 
-    @Transactional(readOnly = true) //  @Transactional을 사용하여 세션 유지
     public void notifyStockPrice() {
         // DB 에 +-5% 값을 가지는 stockid 를 가져와서
         Stream<Long> priceDataEntityStream = stockPriceFetcher.fetchPagedStockIdWithHighChangeRate(CHANGE_RATE);
@@ -48,15 +46,15 @@ public class StockPriceNotificationService {
             interestStockEntities.forEach(interestStock -> {
                 // 해당 정보를 기반으로 memberid 에게 문자 보내기
                 Long memberId = interestStock.getMemberId();
-                memberRepository.findById(memberId).ifPresent(member -> sendNotification(stockId, interestStock, member));
+                memberRepository.findById(memberId).ifPresent(member -> sendNotification(stockId, interestStock.getStockInfo().getStockName(), member));
             });
         });
     }
 
-    private void sendNotification(Long stockId, InterestStockEntity interestStock, MemberEntity member) {
+    private void sendNotification(Long stockId, String stockName, MemberEntity member) {
         String fcmToken = member.getFCMToken();
         if (!StringUtils.hasText(fcmToken)) {
-            log.info("memberId : {} , fcm token is creating : {}", member.getId(), fcmToken);
+            log.info("memberId : {} , fcm token is empty : {}", member.getId(), fcmToken);
             return;
         }
 
@@ -64,8 +62,7 @@ public class StockPriceNotificationService {
         Double changeRate = stockPriceFetcher.getLatestPriceChageRateForStock(stockId);
         String message = String.format(messageTemplate, changeRate);
 
-        // Could not initialize proxy 발생 -  no session  =>   @Transactional 으로 해결
-        String notificationMessage = String.format("%s %s", interestStock.getStockInfo().getStockName(), message);
+        String notificationMessage = String.format("%s %s", stockName, message);
 
         try {
             firebaseMessageSender.sendPush(fcmToken, titleTemplate, notificationMessage);
