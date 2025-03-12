@@ -30,3 +30,13 @@ kis:
     app_key: app_key
     app_secret: app_secret
     access_token : access_token
+
+firebase:
+  credentials:
+    path: firebase/mars-1a3f5-firebase-adminsdk-fbsvc-db14567537.json
+
+notification:
+  stock:
+    title: "📈 주식 변동 알림"
+    message: "변동률은 %.2f%% 이상 변동하였습니다."
+

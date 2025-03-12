@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCM Token Loader</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<h1>FCM Token 생성</h1>
+<button id="get-token">FCM 토큰 요청</button>
+
+<script type="module">
+    // Firebase 설정 및 초기화 코드
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+        measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    // Firebase 앱 초기화
+    firebase.initializeApp(firebaseConfig);
+
+    // Firebase Messaging 초기화
+    const messaging = firebase.messaging();
+
+    // 서비스 워커 등록 (firebase-messaging-sw.js)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {
+                console.log('서비스 워커 등록 성공:', registration);
+            })
+            .catch(function(error) {
+                console.error('서비스 워커 등록 실패:', error);
+            });
+    }
+
+
+    const enableNotificationsButton = document.getElementById('get-token');
+    enableNotificationsButton.addEventListener('click', () => {
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                messaging.getToken({  vapidKey: "vapidKey" })
+                    .then((tokenValue) => {
+                        console.log(`푸시 토큰 발급 완료 : ${tokenValue}`)
+                    })
+                    .catch((err) => {
+                        console.log('푸시 토큰 가져오는 중에 에러 발생')
+                    })
+            } else {
+                console.log('푸시 알림 거부됨');
+            }
+        })
+            .catch((error) => {
+                console.error('Firebase 토큰 가져오기 실패:', error);
+            });
+    });
+</script>
+
+</body>
+</html>

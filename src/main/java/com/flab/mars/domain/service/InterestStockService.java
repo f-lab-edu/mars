@@ -76,7 +76,7 @@ public class InterestStockService {
                     .currentPrice(latestPriceData != null ? latestPriceData.getCurrentPrice() : "0")
                     .priceChangeSign(latestPriceData != null ? latestPriceData.getPriceChangeSign() : "")
                     .priceChange(latestPriceData != null ? latestPriceData.getPriceChange() : "")
-                    .priceChangeRate(latestPriceData != null ? latestPriceData.getPriceChangeRate() : "0")
+                    .priceChangeRate(latestPriceData != null ? latestPriceData.getPriceChangeRate() : 0.0)
                     .build();
 
             interestStockVOs.add(interestStockVO);

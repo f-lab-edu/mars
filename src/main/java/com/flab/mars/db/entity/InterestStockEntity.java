@@ -16,7 +16,7 @@ public class InterestStockEntity {
     @Column (name = "interest_stock_id")
     private Long id; // 관심 주식의 고유 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_info_id")
     private StockInfoEntity stockInfo;
 

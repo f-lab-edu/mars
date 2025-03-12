@@ -42,7 +42,7 @@ class StockPriceSaverTest {
         stockPriceDetails.setAccumulatedTradeAmount("2000000");
         stockPriceDetails.setPriceChange("50");
         stockPriceDetails.setPriceChangeSign("+");
-        stockPriceDetails.setPriceChangeRate("5.0");
+        stockPriceDetails.setPriceChangeRate(5.0);
         kisStockPriceDto.setStockPriceDetails(stockPriceDetails);
 
         stockInfoEntity = StockInfoEntity.builder()

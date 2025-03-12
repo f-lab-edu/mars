@@ -16,5 +16,5 @@ public class InterestStockVO {
     private String currentPrice;    // 현재가
     private String priceChange;        // 전일 대비
     private String priceChangeSign;    // 전일 대비 부호
-    private String priceChangeRate; // 전일 대비율
+    private Double priceChangeRate; // 전일 대비율
 }
