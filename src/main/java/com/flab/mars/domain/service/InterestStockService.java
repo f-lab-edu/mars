@@ -9,6 +9,7 @@ import com.flab.mars.db.repository.StockInfoRepository;
 import com.flab.mars.domain.StockCodeValidator;
 import com.flab.mars.domain.vo.TokenInfoVO;
 import com.flab.mars.domain.vo.response.InterestStockVO;
+import io.micrometer.core.annotation.Counted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class InterestStockService {
     private final PriceDataRepository priceDataRepository;
     private final StockCodeValidator stockCodeValidator;
 
+    @Counted("my.intereststock")
     @Transactional
     public Long registerInterestStock(Long userId, String stockCode, TokenInfoVO token) {
 
