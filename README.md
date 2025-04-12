@@ -25,12 +25,12 @@
 | **JDK**         | 21                     |
 | **IDE**         | IntelliJ IDEA          |
 | **Framework**   | Spring Boot 3.4.0  |
-| **Database**    | MySQL 8.4.3            |
+| **Database**    | H2           |
 | **ORM**         | Hibernate 6.5.3 Final  |
 
 ---
 
-## 🌟 **Project Features (Planned)**
+## 🌟 **Project Features (Planned) **
 
 1. **🔍 실시간 시세 조회**
    - 주요 증권사 API(Kiwoom, Korea Investment 등)를 활용하여 실시간 주가 정보를 제공
