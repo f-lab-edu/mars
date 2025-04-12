@@ -5,6 +5,10 @@
 - **📚 이펙티브 자바**의 내용을 반영하여 코드 설계 및 품질 향상
 
 ---
+## **구성도**
+![image](https://github.com/user-attachments/assets/8ec6fa67-af62-4f67-898d-1a9d42d8a789)
+
+
 
 ## 💻 **Development Environment**
 
