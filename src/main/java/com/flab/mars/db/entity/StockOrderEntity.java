@@ -1,8 +1,7 @@
 package com.flab.mars.db.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "stock_order")
 public class StockOrderEntity {
 
@@ -29,8 +31,8 @@ public class StockOrderEntity {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Column
+    private BigDecimal pricePerUnit; // 주당 거래 가격
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -40,7 +42,11 @@ public class StockOrderEntity {
     @Column(nullable = false)
     private OrderType orderType;
 
+    @Column(nullable = false)
     private LocalDateTime orderDatetime;
+
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 100)
+    private String idempotencyKey;
 
 
 }

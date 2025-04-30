@@ -8,6 +8,11 @@ public class KISApiUrls {
     public static final String BASE_URL = "https://openapi.koreainvestment.com:9443";
 
     /**
+     * 모의 Domain
+     */
+    public static final String MOCK_BASE_URL  = "https://openapivts.koreainvestment.com:29443";
+
+    /**
      * 접근토큰발급
      */
     public static final String GET_TOKEN = "/oauth2/tokenP";
@@ -27,6 +32,11 @@ public class KISApiUrls {
      * 상품기본조회[v1_국내주식-029]
      */
     public static final String SEARCH_INFO = "/uapi/domestic-stock/v1/quotations/search-info";
+
+    /**
+     * 주식주문(현금)[v1_국내주식-001]
+     */
+    public static final String ORDER_CASH = "/uapi/domestic-stock/v1/trading/order-cash";
 
     private KISApiUrls() {
         throw new AssertionError("Cannot instantiate utility class");

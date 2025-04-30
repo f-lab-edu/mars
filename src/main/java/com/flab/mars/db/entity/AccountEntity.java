@@ -1,8 +1,11 @@
 package com.flab.mars.db.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
+@Table(name = "account")
 public class AccountEntity {
 
     @Id
@@ -14,7 +17,9 @@ public class AccountEntity {
     @JoinColumn(name = "member_id")
     private MemberEntity member;
 
-    @Column(name = "account_number", nullable = false, unique = true)
-    private String accountNumber;
+    private String accountPrefix;  // 계좌번호 앞 8자리
+    private String accountSuffix;  // 계좌번호 뒤 2자리
+
+    private boolean isDefault;
 
 }
