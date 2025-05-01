@@ -42,7 +42,13 @@ public class StockOrderService {
         StockInfoEntity stockInfoEntity = stockCodeValidator.validateExist(orderStockVO.getStockCode());
 
         // 현재 사용중인 계좌 호출
-        AccountEntity account  = accountRepository.findByMemberIdAndIsDefaultTrue(member.getId()).orElseThrow(()-> new RuntimeException("기본 계좌가 없습니다."));
+        AccountEntity account  = accountRepository.findByMemberIdAndDefaultFlagTrue(member.getId()).orElseThrow(()-> new RuntimeException("기본 계좌가 없습니다."));
+
+        StockOrderEntity orderEntity = createOrderEntity(orderStockVO, member, stockInfoEntity);
+
+        // 멱등키 중복시 유니크 제약조건 위배 exception을 발생시켜 데이터의 정합성을 보장함.
+        stockOrderRepository.save(orderEntity);
+
         //  KIS API 주문 호출
         KisOrderStockVO kisOrderStockVO = orderStockVO.toKisOrderStockVO(account.getAccountPrefix(), account.getAccountSuffix());
 
@@ -53,21 +59,13 @@ public class StockOrderService {
             if (isTimeoutException(e)) {
                 kisClientOrder.orderStock(kisOrderStockVO);
             } else {
+                orderEntity.markCanceled();
+                stockOrderRepository.save(orderEntity);
                 throw e;
             }
         }
 
-        StockOrderEntity orderEntity = StockOrderEntity.builder()
-                .member(member)
-                .stockInfo(stockInfoEntity)
-                .quantity(orderStockVO.getQuantity())
-                .pricePerUnit(orderStockVO.getLimitPrice())
-                .orderStatus(OrderStatus.PENDING)
-                .orderType(orderStockVO.isBuy() ? OrderType.BUY : OrderType.SELL)
-                .orderDatetime(LocalDateTime.now())
-                .idempotencyKey(orderStockVO.getIdempotencyKey())
-                .build();
-
+        orderEntity.markPending();
         stockOrderRepository.save(orderEntity);
 
         return OrderResult.builder()
@@ -76,6 +74,20 @@ public class StockOrderService {
                 .message("주문이 정상 처리되었습니다.")
                 .build();
 
+    }
+
+    private static StockOrderEntity createOrderEntity(OrderStockVO orderStockVO, MemberEntity member, StockInfoEntity stockInfoEntity) {
+        StockOrderEntity orderEntity = StockOrderEntity.builder()
+                .member(member)
+                .stockInfo(stockInfoEntity)
+                .quantity(orderStockVO.getQuantity())
+                .pricePerUnit(orderStockVO.getLimitPrice())
+                .orderStatus(OrderStatus.REQUESTED)
+                .orderType(orderStockVO.isBuy() ? OrderType.BUY : OrderType.SELL)
+                .orderDatetime(LocalDateTime.now())
+                .idempotencyKey(orderStockVO.getIdempotencyKey())
+                .build();
+        return orderEntity;
     }
 
     private boolean isTimeoutException(WebClientRequestException e) {

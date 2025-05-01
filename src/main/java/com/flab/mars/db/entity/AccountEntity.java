@@ -20,6 +20,6 @@ public class AccountEntity {
     private String accountPrefix;  // 계좌번호 앞 8자리
     private String accountSuffix;  // 계좌번호 뒤 2자리
 
-    private boolean isDefault;
+    private boolean defaultFlag;
 
 }
