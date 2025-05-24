@@ -1,6 +1,8 @@
 package com.flab.mars.config;
 
 import com.flab.mars.client.KISApiUrls;
+import io.micrometer.core.aop.CountedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -30,5 +32,10 @@ public class RootConfig {
                                 .responseTimeout(Duration.ofSeconds(10)) // 응답 타임아웃 10초 추가
                 ))
                 .build();
+    }
+
+    @Bean
+    public CountedAspect countedAspect(MeterRegistry registry) {
+        return new CountedAspect(registry); // CountedAspect 를 등록하면  @Counted 를 인지해서 Counter 를 사용하는 AOP 를 적용한다.
     }
 }

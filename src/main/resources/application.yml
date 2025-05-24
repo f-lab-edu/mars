@@ -40,3 +40,8 @@ notification:
     title: "📈 주식 변동 알림"
     message: "변동률은 %.2f%% 이상 변동하였습니다."
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # 모든 엔드포인트 노출
