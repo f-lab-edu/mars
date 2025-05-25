@@ -2,6 +2,7 @@ package com.flab.mars.client;
 
 import com.flab.mars.client.dto.KisOrderResponseDto;
 import com.flab.mars.client.dto.KisOrderStockVO;
+import com.flab.mars.client.vo.KisAuthInfoVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,13 +22,13 @@ public class KISClientOrder {
 
     private final WebClient webClient;
 
-    public KisOrderResponseDto orderStock(KisOrderStockVO kisOrderStock) {
+    public KisOrderResponseDto orderStock(KisOrderStockVO kisOrderStock, KisAuthInfoVO kisAuthInfo) {
         KisOrderResponseDto kisOrderResponseDto = webClient.post()
                 .uri(KISApiUrls.ORDER_CASH) // 실제 주문 URI로 교체
                 .headers(headers -> {
-                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + kisOrderStock.getAccessToken());
-                    headers.set("appkey", kisOrderStock.getAppKey());
-                    headers.set("appsecret", kisOrderStock.getAppSecret());
+                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + kisAuthInfo.getAccessToken());
+                    headers.set("appkey", kisAuthInfo.getAppKey());
+                    headers.set("appsecret", kisAuthInfo.getAppSecret());
                     headers.set("tr_id", kisOrderStock.isBuy() ? "VTTC0012U" : "VTTC0011U"); // 예시: 매수/매도 구분
                     headers.set("custtype", "P"); // 고객 타입  P : 개인, B : 법인
                 })

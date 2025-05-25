@@ -8,7 +8,8 @@ import com.flab.mars.db.repository.StockOrderRepository;
 import com.flab.mars.domain.StockCodeValidator;
 import com.flab.mars.domain.component.IdempotencyValidator;
 import com.flab.mars.domain.component.MemberValidator;
-import com.flab.mars.domain.vo.OrderStockVO;
+import com.flab.mars.domain.vo.AuthInfoVO;
+import com.flab.mars.domain.vo.Order;
 import com.flab.mars.domain.vo.response.OrderResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,36 +29,36 @@ public class StockOrderService {
     private final StockCodeValidator stockCodeValidator;
     private final AccountRepository accountRepository;
 
-    public OrderResult processOrder(OrderStockVO orderStockVO) {
+    public OrderResult processOrder(Order order, AuthInfoVO authInfo, Long userId) {
 
         // 멱등성 검사
-        Optional<OrderResult> duplicateResult  = idempotencyValidator.validate(orderStockVO.getIdempotencyKey());
+        Optional<OrderResult> duplicateResult  = idempotencyValidator.validate(order.getIdempotencyKey());
         if (duplicateResult.isPresent()) {
             return duplicateResult.get();
         }
 
         // Member, StockInfo 조회
-        MemberEntity member = memberValidator.validateExist(orderStockVO.getMemberId());
+        MemberEntity member = memberValidator.validateExist(userId);
 
-        StockInfoEntity stockInfoEntity = stockCodeValidator.validateExist(orderStockVO.getStockCode());
+        StockInfoEntity stockInfoEntity = stockCodeValidator.validateExist(order.getStockCode());
 
         // 현재 사용중인 계좌 호출
         AccountEntity account  = accountRepository.findByMemberIdAndDefaultFlagTrue(member.getId()).orElseThrow(()-> new RuntimeException("기본 계좌가 없습니다."));
 
-        StockOrderEntity orderEntity = createOrderEntity(orderStockVO, member, stockInfoEntity);
+        StockOrderEntity orderEntity = createOrderEntity(order, member, stockInfoEntity);
 
         // 멱등키 중복시 유니크 제약조건 위배 exception을 발생시켜 데이터의 정합성을 보장함.
         stockOrderRepository.save(orderEntity);
 
         //  KIS API 주문 호출
-        KisOrderStockVO kisOrderStockVO = orderStockVO.toKisOrderStockVO(account.getAccountPrefix(), account.getAccountSuffix());
+        KisOrderStockVO kisOrderStockVO = order.toKisOrderStockVO(account.getAccountPrefix(), account.getAccountSuffix());
 
         // time out 시 1회 트라이
         try {
-            kisClientOrder.orderStock(kisOrderStockVO);
+            kisClientOrder.orderStock(kisOrderStockVO, authInfo.toKisAuthInfoVO());
         } catch (WebClientRequestException e) {
             if (isTimeoutException(e)) {
-                kisClientOrder.orderStock(kisOrderStockVO);
+                kisClientOrder.orderStock(kisOrderStockVO, authInfo.toKisAuthInfoVO());
             } else {
                 orderEntity.markCanceled();
                 stockOrderRepository.save(orderEntity);
@@ -76,18 +77,17 @@ public class StockOrderService {
 
     }
 
-    private static StockOrderEntity createOrderEntity(OrderStockVO orderStockVO, MemberEntity member, StockInfoEntity stockInfoEntity) {
-        StockOrderEntity orderEntity = StockOrderEntity.builder()
+    private static StockOrderEntity createOrderEntity(Order order, MemberEntity member, StockInfoEntity stockInfoEntity) {
+        return StockOrderEntity.builder()
                 .member(member)
                 .stockInfo(stockInfoEntity)
-                .quantity(orderStockVO.getQuantity())
-                .pricePerUnit(orderStockVO.getLimitPrice())
+                .quantity(order.getQuantity())
+                .pricePerUnit(order.getPrice().orElse(null))
                 .orderStatus(OrderStatus.REQUESTED)
-                .orderType(orderStockVO.isBuy() ? OrderType.BUY : OrderType.SELL)
+                .orderType(OrderType.valueOf(order.getOrderType().name()))
                 .orderDatetime(LocalDateTime.now())
-                .idempotencyKey(orderStockVO.getIdempotencyKey())
+                .idempotencyKey(order.getIdempotencyKey())
                 .build();
-        return orderEntity;
     }
 
     private boolean isTimeoutException(WebClientRequestException e) {

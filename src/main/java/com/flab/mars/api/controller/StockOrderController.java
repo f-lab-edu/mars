@@ -1,10 +1,12 @@
 package com.flab.mars.api.controller;
 
+import com.flab.mars.api.converter.OrderFactory;
 import com.flab.mars.api.dto.request.BuyStockRequest;
 import com.flab.mars.api.dto.response.OrderStockResponse;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.domain.service.StockOrderService;
-import com.flab.mars.domain.vo.OrderStockVO;
+import com.flab.mars.domain.vo.AuthInfoVO;
+import com.flab.mars.domain.vo.Order;
 import com.flab.mars.domain.vo.response.OrderResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +27,11 @@ public class StockOrderController {
     @PostMapping
     public ResponseEntity<ResultAPIDto<OrderStockResponse>> buyStock(@RequestBody @Valid BuyStockRequest request) {
 
-        OrderStockVO orderStockVO = OrderStockVO.builder()
-                .memberId(request.getMemberId())
-                .appKey(request.getAppKey())
-                .appSecret(request.getAppSecret())
-                .accessToken(request.getAccessToken())
-                .idempotencyKey(request.getIdempotencyKey())
-                .orderType(request.getOrderType())
-                .priceType(request.getPriceType())
-                .quantity(request.getQuantity())
-                .stockCode(request.getStockCode())
-                .build();
+        Order order = OrderFactory.from(request);
 
-        OrderResult orderResult = stockOrderService.processOrder(orderStockVO);
+        AuthInfoVO authInfo = new AuthInfoVO(request.getAppKey(), request.getAppSecret(), request.getAccessToken());
+
+        OrderResult orderResult = stockOrderService.processOrder(order, authInfo, request.getMemberId());
         OrderStockResponse orderStockResponse = new OrderStockResponse(orderResult.getOrderId(), orderResult.getStatus(), orderResult.getMessage());
 
         return ResponseEntity.ok(ResultAPIDto.res(HttpStatus.OK, "주식 주문 완료", orderStockResponse));
