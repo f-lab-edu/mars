@@ -38,7 +38,7 @@ public class KISClientOrder {
                         "PDNO", kisOrderStock.getStockCode(),
                         "ORD_DVSN", kisOrderStock.getPriceType().equals("MARKET") ? "01" : "00", // 예: "00" 지정가, "01" 시장가 등
                         "ORD_QTY", String.valueOf(kisOrderStock.getQuantity()),
-                        "ORD_UNPR", kisOrderStock.getPriceType().equals("MARKET") ? "0" : String.valueOf(kisOrderStock.getPrice()) // 주문단가 , 시장가 주문시, "0"으로 입력
+                        "ORD_UNPR", kisOrderStock.getPriceType().equals("MARKET") ? "0" : String.valueOf(kisOrderStock.getLimitPrice()) // 주문단가 , 시장가 주문시, "0"으로 입력
                 ))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response ->

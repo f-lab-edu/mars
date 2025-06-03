@@ -9,7 +9,7 @@ import com.flab.mars.domain.StockCodeValidator;
 import com.flab.mars.domain.component.IdempotencyValidator;
 import com.flab.mars.domain.component.MemberValidator;
 import com.flab.mars.domain.vo.AuthInfoVO;
-import com.flab.mars.domain.vo.Order;
+import com.flab.mars.domain.vo.order.OrderVO;
 import com.flab.mars.domain.vo.response.OrderResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class StockOrderService {
     private final StockCodeValidator stockCodeValidator;
     private final AccountRepository accountRepository;
 
-    public OrderResult processOrder(Order order, AuthInfoVO authInfo, Long userId) {
+    public OrderResult processOrder(OrderVO order, AuthInfoVO authInfo, Long userId) {
 
         // 멱등성 검사
         Optional<OrderResult> duplicateResult  = idempotencyValidator.validate(order.getIdempotencyKey());
@@ -77,12 +77,12 @@ public class StockOrderService {
 
     }
 
-    private static StockOrderEntity createOrderEntity(Order order, MemberEntity member, StockInfoEntity stockInfoEntity) {
+    private static StockOrderEntity createOrderEntity(OrderVO order, MemberEntity member, StockInfoEntity stockInfoEntity) {
         return StockOrderEntity.builder()
                 .member(member)
                 .stockInfo(stockInfoEntity)
                 .quantity(order.getQuantity())
-                .pricePerUnit(order.getPrice().orElse(null))
+                .pricePerUnit(order.getPriceStrategy().getPrice().orElse(null))
                 .orderStatus(OrderStatus.REQUESTED)
                 .orderType(OrderType.valueOf(order.getOrderType().name()))
                 .orderDatetime(LocalDateTime.now())

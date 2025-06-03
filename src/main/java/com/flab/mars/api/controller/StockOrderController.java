@@ -6,7 +6,7 @@ import com.flab.mars.api.dto.response.OrderStockResponse;
 import com.flab.mars.api.dto.response.ResultAPIDto;
 import com.flab.mars.domain.service.StockOrderService;
 import com.flab.mars.domain.vo.AuthInfoVO;
-import com.flab.mars.domain.vo.Order;
+import com.flab.mars.domain.vo.order.OrderVO;
 import com.flab.mars.domain.vo.response.OrderResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class StockOrderController {
     @PostMapping
     public ResponseEntity<ResultAPIDto<OrderStockResponse>> buyStock(@RequestBody @Valid BuyStockRequest request) {
 
-        Order order = OrderFactory.from(request);
+        OrderVO order = OrderFactory.from(request);
 
         AuthInfoVO authInfo = new AuthInfoVO(request.getAppKey(), request.getAppSecret(), request.getAccessToken());
 

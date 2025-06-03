@@ -21,17 +21,9 @@ public class KisOrderStockVO {
 
     private BigDecimal limitPrice; // 지정가 주문 시에만 사용
 
-    // 주문 단가
-    private final int price;
 
     // 매수 여부 (true면 매수, false면 매도)
     private final boolean isBuy;
-
-    private String appKey;
-
-    private String appSecret;
-
-    private String accessToken;
 
     private String accountPrefix;  // CANO - 앞 8자리
     private String accountSuffix;  // ACNT_PRDT_CD - 뒤 2자리
