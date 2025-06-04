@@ -2,6 +2,8 @@ package com.flab.mars.domain;
 
 import com.flab.mars.client.KISClient;
 import com.flab.mars.client.dto.KisStockResponseDto;
+import com.flab.mars.db.entity.StockInfoEntity;
+import com.flab.mars.db.repository.StockInfoRepository;
 import com.flab.mars.domain.vo.TokenInfoVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ public class StockCodeValidator {
 
     private final KISClient kisClient;
 
+    private final StockInfoRepository stockInfoRepository;
 
     public String validateAndGetStockName(String stockCode, TokenInfoVO token)  {
 
@@ -28,5 +31,10 @@ public class StockCodeValidator {
             throw new IllegalStateException(" 해당 주식 코드에 관련된 정보를 조회할 수 없습니다 : " + stockCode);
         }
         return stockInfo.getProductAbbreviation();
+    }
+
+    public StockInfoEntity validateExist(String stockCode) {
+        return stockInfoRepository.findByStockCode(stockCode)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 종목 코드: " + stockCode));
     }
 }
