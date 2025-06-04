@@ -69,7 +69,7 @@ public class StockOrderService {
             }
         }
 
-        orderEntity.markPending();;
+        orderEntity.markPending();
 
         return OrderResult.builder()
                 .orderId(orderEntity.getId())
