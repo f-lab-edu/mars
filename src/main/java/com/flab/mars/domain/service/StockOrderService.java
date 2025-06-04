@@ -60,6 +60,8 @@ public class StockOrderService {
             kisClientOrder.orderStock(kisOrderStockVO, authInfo.toKisAuthInfoVO());
         } catch (WebClientRequestException e) {
             if (isTimeoutException(e)) {
+                // TODO : KIS 주식일별주문체결 조회 API를 호출하아ㅕ 기존 주문 여부를 확인한 뒤,
+                // 존재하지 않을 경우메만 재요청하도록 로직 개선 필요
                 kisClientOrder.orderStock(kisOrderStockVO, authInfo.toKisAuthInfoVO());
             } else {
                 orderEntity.markCanceled();
