@@ -13,6 +13,7 @@ import com.flab.mars.domain.vo.order.OrderVO;
 import com.flab.mars.domain.vo.response.OrderResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class StockOrderService {
     private final StockCodeValidator stockCodeValidator;
     private final AccountRepository accountRepository;
 
+    @Transactional
     public OrderResult processOrder(OrderVO order, AuthInfoVO authInfo, Long userId) {
 
         // 멱등성 검사
@@ -61,13 +63,11 @@ public class StockOrderService {
                 kisClientOrder.orderStock(kisOrderStockVO, authInfo.toKisAuthInfoVO());
             } else {
                 orderEntity.markCanceled();
-                stockOrderRepository.save(orderEntity);
                 throw e;
             }
         }
 
-        orderEntity.markPending();
-        stockOrderRepository.save(orderEntity);
+        orderEntity.markPending();;
 
         return OrderResult.builder()
                 .orderId(orderEntity.getId())
