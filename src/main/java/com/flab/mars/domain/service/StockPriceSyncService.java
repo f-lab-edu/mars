@@ -1,7 +1,7 @@
 package com.flab.mars.domain.service;
 
 import com.flab.mars.client.KISClient;
-import com.flab.mars.client.KISConfig;
+import com.flab.mars.client.KISProperties;
 import com.flab.mars.client.dto.KisStockPriceDto;
 import com.flab.mars.db.entity.StockInfoEntity;
 import jakarta.annotation.PreDestroy;
@@ -21,14 +21,14 @@ public class StockPriceSyncService {
     private final StockInfoFetcher stockInfoFetcher;
     private final StockPriceSaver stockPriceSaver;
     private final KISClient kisClient;
-    private final KISConfig kisConfig;
+    private final KISProperties kisProperties;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
     private void syncStockPriceAsync(StockInfoEntity stockInfo) {
         executor.submit(() -> {
             try {
-                KisStockPriceDto stockPrice = kisClient.getStockPrice(kisConfig.getAccessToken(), kisConfig.getAppKey(), kisConfig.getAppSecret(), stockInfo.getStockCode());
+                KisStockPriceDto stockPrice = kisClient.getStockPrice(kisProperties.getAuth().getAccessToken(), kisProperties.getAuth().getAppKey(), kisProperties.getAuth().getAppSecret(), stockInfo.getStockCode());
                 stockPriceSaver.storeStockPriceWithoutDuplication(stockPrice, stockInfo, LocalDateTime.now());
             } catch (Exception e) {
                 log.error("StockPriceSyncService 동기화 중 에러 발생 for stock code: {}", stockInfo.getStockCode(), e);
