@@ -1,7 +1,8 @@
-#local 환경
+# 공통 설정
 spring:
   profiles:
-    default: local
+    active: prod
+
   datasource:
     url: jdbc:h2:tcp://localhost/~/mars
     username: sa
@@ -13,7 +14,7 @@ spring:
     properties:
       hibernate:
         #         show_sql: true # 시스템 아웃으로 sql 출력
-        format_sql: true
+        format-sql: true
 
 
 
@@ -26,10 +27,12 @@ logging:
 
 kis:
   api:
-    grant_type: client_credentials
-    app_key: app_key
-    app_secret: app_secret
-    access_token : access_token
+    base-url: https://openapivts.koreainvestment.com:29443
+  auth:
+    grant-type: client_credentials
+    app-key: app_key
+    app-secret: app_secret
+    access-token : access_token
 
 firebase:
   credentials:
@@ -40,3 +43,24 @@ notification:
     title: "📈 주식 변동 알림"
     message: "변동률은 %.2f%% 이상 변동하였습니다."
 
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+kis:
+  api:
+    base-url: https://openapivts.koreainvestment.com:29443
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+kis:
+  api:
+    base-url: https://openapi.koreainvestment.com:9443
